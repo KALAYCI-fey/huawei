@@ -43,6 +43,20 @@ def long_to_datetime(value: int | str | None) -> datetime | None:
     return datetime.strptime(text, "%Y%m%d%H%M%S").replace(tzinfo=TZ)
 
 
+def datetime_to_millis(dt: datetime) -> int:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=TZ)
+    return int(dt.timestamp() * 1000)
+
+
+def millis_to_datetime(value: int | float) -> datetime:
+    return datetime.fromtimestamp(int(value) / 1000, tz=TZ)
+
+
+def millis_to_long(value: int | float, zoom: str = "hour") -> int:
+    return date_to_long(millis_to_datetime(value), zoom)
+
+
 def parse_iso_date(value: str, zoom: str = "day") -> int:
     """Parse YYYY-MM-DD or YYYY-MM-DDTHH:MM into an ARiL long timestamp."""
     text = value.strip()

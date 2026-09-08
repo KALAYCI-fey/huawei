@@ -20,8 +20,12 @@ def load_dotenv(path: str | Path = ".env") -> None:
         os.environ.setdefault(key, value)
 
 
+def env(name: str, default: str = "") -> str:
+    return os.environ.get(name, default).strip()
+
+
 def require_env(name: str) -> str:
-    value = os.environ.get(name, "").strip()
+    value = env(name)
     if not value:
         raise RuntimeError(
             f"{name} tanımlı değil. `.env.example` dosyasını `.env` olarak kopyalayıp doldurun."

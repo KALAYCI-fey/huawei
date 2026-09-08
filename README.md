@@ -1,12 +1,10 @@
 # huawei
 
-OEDAŞ OSOS (Otomatik Sayaç Okuma Sistemi) müşteri portalındaki abone, endeks, tüketim ve yük profili verilerini yerel bir uygulama modülüne aktarır.
+OEDAŞ OSOS müşteri portalındaki abone, endeks, tüketim ve yük profili verilerini yerel SQLite deposuna aktarır; üretim tesisatlarını Huawei FusionSolar santralleriyle eşler.
+
+## OSOS
 
 Kaynak: [ososout.oedas.com.tr](https://ososout.oedas.com.tr) (ARiL müşteri portalı)
-
-## Ne yapar
-
-Portalın kendi REST/ESB API'sine giriş yapar, portföydeki tesisatları çeker ve SQLite'a yazar:
 
 | Tablo | Kaynak servis | İçerik |
 |---|---|---|
@@ -16,7 +14,9 @@ Portalın kendi REST/ESB API'sine giriş yapar, portföydeki tesisatları çeker
 | `load_profiles` | `GetOwnerLoadProfiles` | 15 dakikalık yük profili |
 | `current_endexes` | `GetCurrentEndexes` | Güncel endeks |
 
-Şifre repoya yazılmaz. Kimlik bilgileri yalnızca `.env` içindedir.
+Eşleme anahtarı **tesisat numarasıdır**. ETSO (`40Z…`) tekil değildir; aynı ETSO birden fazla tesisatta görülebilir.
+
+Üretim tesisleri `definition_type = 15` (`GenerationPlant`), tüketim aboneleri `2` (`Subscriber`). Saatlik üretim `consumptions.generation_kwh` alanındadır.
 
 ## Kurulum
 
@@ -27,43 +27,70 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-`.env` içine OSOS kullanıcı adı ve şifresini yazın:
+`.env` içine OSOS ve (varsa) FusionSolar Northbound bilgilerini yazın. Northbound hesabı, FusionSolar web girişinden ayrıdır.
 
 ```
 OSOS_USERNAME=your.username
 OSOS_PASSWORD=your.password
+HUAWEI_USERNAME=
+HUAWEI_SYSTEM_CODE=
+HUAWEI_BASE_URL=https://eu5.fusionsolar.huawei.com
 ```
 
-## Kullanım
+## OSOS kullanımı
 
 ```bash
-# Girişi doğrula
 python -m osos login
-
-# Sadece tesisat listesi
 python -m osos subscribers
-
-# Bu ayın verisini çek (tüketim + 15 dk profil)
-python -m osos sync
-
-# Tarih aralığı (bitiş günü dahil)
 python -m osos sync --from 2026-09-01 --to 2026-09-08
-
-# Yük profili olmadan daha hızlı çekim
-python -m osos sync --from 2026-09-01 --to 2026-09-08 --no-profiles
-
-# Yerel kayıt sayıları
 python -m osos status
 ```
 
-Varsayılan veritabanı: `data/osos.db`
+## Huawei eşlemesi
 
-## Huawei / EMS eşlemesi
+1. FusionSolar santrallerini çekin (Northbound hesabı gerekir):
 
-Tesisat numarası (`subscribers.tesisat`) ve ETSO (`etso`) hedef sistemdeki site/inverter kaydına bağlanacak anahtarlardır. Üretim tesisleri `definition_type = 15` (`GenerationPlant`), tüketim aboneleri `2` (`Subscriber`). Saatlik üretim `consumptions.generation_kwh` alanındadır.
+```bash
+python -m osos huawei-login
+python -m osos huawei-plants
+```
+
+2. Tesisat listesini CSV olarak dışa alın, `plant_code` sütununu doldurun, geri yükleyin:
+
+```bash
+python -m osos map-export --out data/site_mappings.csv
+# CSV'de plant_code = FusionSolar plantCode (ör. NE=…)
+python -m osos map-import --file data/site_mappings.csv
+```
+
+Örnek şablon: `examples/site_mappings.example.csv`
+
+Tek kayıt:
+
+```bash
+python -m osos map-set --tesisat 10000091010 --plant-code NE=SANTRAL_ID --plant-name "Afyon GES"
+```
+
+Ada/adrese göre öneri (önce `huawei-plants`):
+
+```bash
+python -m osos map-suggest
+python -m osos map-suggest --apply
+python -m osos map-list
+```
+
+3. Huawei üretimini çekip OSOS ile karşılaştırın:
+
+```bash
+python -m osos huawei-sync --from 2026-09-01 --to 2026-09-08
+python -m osos compare --from 2026-09-01 --to 2026-09-08
+```
+
+`compare` eşlenmiş tesisatlarda `generation_kwh` (OSOS, çarpan uygulanmış) ile `inverter_power` (Huawei saatlik kWh) farkını verir.
+
+FusionSolar resmi olarak saatlik KPI için dakikada yaklaşık 1 istek sınırlar. Gerekirse `--sleep 61` kullanın.
 
 ## Güvenlik
 
 - Şifreyi sohbet, PR veya git geçmişine yazmayın.
-- Şifre bir sohbette paylaşıldıysa OSOS portalından değiştirin.
 - `data/` ve `.env` `.gitignore` içindedir.

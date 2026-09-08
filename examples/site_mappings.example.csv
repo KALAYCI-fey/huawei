@@ -1,0 +1,4 @@
+tesisat,etso,definition_type_name,title,address,plant_code,plant_name,notes
+10000091010,40Z000136394654X,GenerationPlant,AFYON DOMATES MADEN SANAYİ VE TİC.LTD.ŞTİ.,,,,Afyon Domates GES,Üretim sayacı. plant_code alanına FusionSolar plantCode yazın.
+10000091000,40Z000136394654X,GenerationPlant,AFYON DOMATES MADEN SANAYİ VE TİC.LTD.ŞTİ.,,,,Afyon Domates GES,Aynı ETSO birden fazla tesisatta olabilir; eşleme tesisat numarasına göredir.
+10000032230,40Z000002606920J,Subscriber,BAZALTO MADENCİLİK TARIM SANAYİ VE TİCARET LTD.,,,,,,İsteğe bağlı tüketim abonesi eşlemesi

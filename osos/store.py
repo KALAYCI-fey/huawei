@@ -118,6 +118,51 @@ CREATE TABLE IF NOT EXISTS sync_log (
     status TEXT NOT NULL,
     detail TEXT
 );
+
+CREATE TABLE IF NOT EXISTS huawei_plants (
+    plant_code TEXT PRIMARY KEY,
+    plant_name TEXT,
+    plant_address TEXT,
+    capacity REAL,
+    longitude REAL,
+    latitude REAL,
+    grid_connection_date TEXT,
+    raw_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS site_mappings (
+    tesisat TEXT PRIMARY KEY,
+    subscription_serno INTEGER,
+    etso TEXT,
+    plant_code TEXT NOT NULL,
+    plant_name TEXT,
+    match_source TEXT,
+    notes TEXT,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS huawei_hourly (
+    plant_code TEXT NOT NULL,
+    collect_time_ms INTEGER NOT NULL,
+    profile_date INTEGER,
+    inverter_kwh REAL,
+    ongrid_kwh REAL,
+    raw_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (plant_code, collect_time_ms)
+);
+
+CREATE TABLE IF NOT EXISTS huawei_daily (
+    plant_code TEXT NOT NULL,
+    collect_time_ms INTEGER NOT NULL,
+    profile_date INTEGER,
+    inverter_kwh REAL,
+    ongrid_kwh REAL,
+    raw_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (plant_code, collect_time_ms)
+);
 """
 
 
@@ -420,20 +465,223 @@ class OsosStore:
             "consumptions",
             "load_profiles",
             "current_endexes",
+            "huawei_plants",
+            "site_mappings",
+            "huawei_hourly",
+            "huawei_daily",
         ]
         out: dict[str, int] = {}
         for table in tables:
             out[table] = int(self.conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
         return out
 
-    def list_subscribers(self) -> list[sqlite3.Row]:
-        return list(
-            self.conn.execute(
-                "SELECT subscription_serno, tesisat, definition_type, definition_type_name, "
-                "title, meter_brand, meter_serial, multiplier, etso FROM subscribers "
-                "ORDER BY tesisat"
-            )
+    def list_subscribers(self, generation_only: bool = False) -> list[sqlite3.Row]:
+        sql = (
+            "SELECT subscription_serno, tesisat, identifier_sec, definition_type, "
+            "definition_type_name, title, address, meter_brand, meter_serial, "
+            "multiplier, etso, installed_power FROM subscribers"
         )
+        params: tuple[Any, ...] = ()
+        if generation_only:
+            sql += " WHERE definition_type = 15"
+        sql += " ORDER BY definition_type DESC, tesisat"
+        return list(self.conn.execute(sql, params))
+
+    def subscriber_dicts(self, generation_only: bool = False) -> list[dict[str, Any]]:
+        return [dict(row) for row in self.list_subscribers(generation_only=generation_only)]
+
+    def upsert_huawei_plants(self, rows: Iterable[dict[str, Any]]) -> int:
+        count = 0
+        for row in rows:
+            self.conn.execute(
+                """
+                INSERT INTO huawei_plants (
+                    plant_code, plant_name, plant_address, capacity, longitude,
+                    latitude, grid_connection_date, raw_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(plant_code) DO UPDATE SET
+                    plant_name=excluded.plant_name,
+                    plant_address=excluded.plant_address,
+                    capacity=excluded.capacity,
+                    longitude=excluded.longitude,
+                    latitude=excluded.latitude,
+                    grid_connection_date=excluded.grid_connection_date,
+                    raw_json=excluded.raw_json,
+                    updated_at=excluded.updated_at
+                """,
+                (
+                    row.get("plant_code"),
+                    row.get("plant_name"),
+                    row.get("plant_address"),
+                    row.get("capacity"),
+                    row.get("longitude"),
+                    row.get("latitude"),
+                    row.get("grid_connection_date"),
+                    _dumps(row.get("raw") or row),
+                    _now(),
+                ),
+            )
+            count += 1
+        self.conn.commit()
+        return count
+
+    def list_huawei_plants(self) -> list[dict[str, Any]]:
+        return [
+            dict(row)
+            for row in self.conn.execute(
+                "SELECT plant_code, plant_name, plant_address, capacity "
+                "FROM huawei_plants ORDER BY plant_name"
+            )
+        ]
+
+    def upsert_site_mapping(self, row: dict[str, Any]) -> None:
+        tesisat = row["tesisat"]
+        subscriber = self.conn.execute(
+            "SELECT subscription_serno, etso FROM subscribers WHERE tesisat = ?",
+            (tesisat,),
+        ).fetchone()
+        self.conn.execute(
+            """
+            INSERT INTO site_mappings (
+                tesisat, subscription_serno, etso, plant_code, plant_name,
+                match_source, notes, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(tesisat) DO UPDATE SET
+                subscription_serno=excluded.subscription_serno,
+                etso=excluded.etso,
+                plant_code=excluded.plant_code,
+                plant_name=excluded.plant_name,
+                match_source=excluded.match_source,
+                notes=excluded.notes,
+                updated_at=excluded.updated_at
+            """,
+            (
+                tesisat,
+                None if subscriber is None else subscriber["subscription_serno"],
+                row.get("etso") or (None if subscriber is None else subscriber["etso"]),
+                row["plant_code"],
+                row.get("plant_name"),
+                row.get("match_source") or "manual",
+                row.get("notes"),
+                _now(),
+            ),
+        )
+        self.conn.commit()
+
+    def mapping_by_tesisat(self) -> dict[str, dict[str, Any]]:
+        return {
+            row["tesisat"]: dict(row)
+            for row in self.conn.execute(
+                "SELECT tesisat, subscription_serno, etso, plant_code, plant_name, "
+                "match_source, notes FROM site_mappings"
+            )
+        }
+
+    def list_mappings(self) -> list[dict[str, Any]]:
+        return [
+            dict(row)
+            for row in self.conn.execute(
+                """
+                SELECT m.tesisat, m.etso, m.plant_code, m.plant_name, m.match_source,
+                       s.definition_type_name, s.title
+                FROM site_mappings m
+                LEFT JOIN subscribers s ON s.tesisat = m.tesisat
+                ORDER BY m.tesisat
+                """
+            )
+        ]
+
+    def mapped_plant_codes(self) -> list[str]:
+        rows = self.conn.execute(
+            "SELECT DISTINCT plant_code FROM site_mappings WHERE plant_code IS NOT NULL"
+        )
+        return [row[0] for row in rows]
+
+    def upsert_huawei_hourly(self, rows: Iterable[dict[str, Any]]) -> int:
+        from osos.dates import millis_to_long
+
+        count = 0
+        for row in rows:
+            collect_ms = int(row["collectTime"])
+            items = row.get("dataItemMap") or {}
+            self.conn.execute(
+                """
+                INSERT INTO huawei_hourly (
+                    plant_code, collect_time_ms, profile_date, inverter_kwh,
+                    ongrid_kwh, raw_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(plant_code, collect_time_ms) DO UPDATE SET
+                    profile_date=excluded.profile_date,
+                    inverter_kwh=excluded.inverter_kwh,
+                    ongrid_kwh=excluded.ongrid_kwh,
+                    raw_json=excluded.raw_json,
+                    updated_at=excluded.updated_at
+                """,
+                (
+                    row.get("stationCode") or row.get("plant_code"),
+                    collect_ms,
+                    millis_to_long(collect_ms, "hour"),
+                    items.get("inverter_power"),
+                    items.get("ongrid_power"),
+                    _dumps(row),
+                    _now(),
+                ),
+            )
+            count += 1
+        self.conn.commit()
+        return count
+
+    def upsert_huawei_daily(self, rows: Iterable[dict[str, Any]]) -> int:
+        from osos.dates import millis_to_long
+
+        count = 0
+        for row in rows:
+            collect_ms = int(row["collectTime"])
+            items = row.get("dataItemMap") or {}
+            self.conn.execute(
+                """
+                INSERT INTO huawei_daily (
+                    plant_code, collect_time_ms, profile_date, inverter_kwh,
+                    ongrid_kwh, raw_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(plant_code, collect_time_ms) DO UPDATE SET
+                    profile_date=excluded.profile_date,
+                    inverter_kwh=excluded.inverter_kwh,
+                    ongrid_kwh=excluded.ongrid_kwh,
+                    raw_json=excluded.raw_json,
+                    updated_at=excluded.updated_at
+                """,
+                (
+                    row.get("stationCode") or row.get("plant_code"),
+                    collect_ms,
+                    millis_to_long(collect_ms, "day"),
+                    items.get("inverter_power"),
+                    items.get("ongrid_power"),
+                    _dumps(row),
+                    _now(),
+                ),
+            )
+            count += 1
+        self.conn.commit()
+        return count
+
+    def hourly_compare_rows(self, start_long: int, end_long: int) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT s.tesisat, m.plant_code, c.profile_date,
+                   c.generation_kwh AS osos_kwh,
+                   h.inverter_kwh AS huawei_kwh
+            FROM site_mappings m
+            JOIN subscribers s ON s.tesisat = m.tesisat
+            JOIN consumptions c ON c.owner_serno = s.subscription_serno
+            LEFT JOIN huawei_hourly h
+              ON h.plant_code = m.plant_code AND h.profile_date = c.profile_date
+            WHERE c.profile_date BETWEEN ? AND ?
+            ORDER BY s.tesisat, c.profile_date
+            """,
+            (start_long, end_long),
+        )
+        return [dict(row) for row in rows]
 
 
 def _public_login(login: dict[str, Any]) -> dict[str, Any]:
