@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { IepBilgilerForm } from '../components/IepBilgilerForm'
+import { DocumentPanel } from '../components/DocumentPanel'
 import { ProgramBadge } from '../components/Badges'
-import { formatDate } from '../format'
 import {
   deleteProgram,
   getSelectedFirmaId,
@@ -10,21 +10,7 @@ import {
   upsertProgram,
   useAppState,
 } from '../store'
-import type {
-  DocumentKind,
-  Program,
-  UploadedDoc,
-  Workplace,
-} from '../types'
-
-const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/tiff', 'image/tif']
-
-const DOCUMENT_ROWS: { tur: DocumentKind; ad: string; zorunlu: boolean }[] = [
-  { tur: 'talep_dilekcesi', ad: 'Talep dilekçesi', zorunlu: true },
-  { tur: 'isveren_belgesi', ad: 'İşveren belgesi', zorunlu: true },
-  { tur: 'imza_yetki', ad: 'İmza yetki belgesi', zorunlu: true },
-  { tur: 'ortaklik', ad: 'Ortaklık belgesi', zorunlu: false },
-]
+import type { Program, Workplace } from '../types'
 
 function emptyWeek() {
   return [true, true, true, true, true, false, false]
@@ -299,137 +285,6 @@ function ApplicationEditor({
       ) : null}
     </div>
   )
-}
-
-function DocumentPanel({
-  program,
-  onChange,
-  onNext,
-}: {
-  program: Program
-  onChange: (belgeler: UploadedDoc[]) => void
-  onNext: () => void
-}) {
-  const [pending, setPending] = useState<Record<string, File | null>>({})
-  const [error, setError] = useState('')
-
-  async function upload(tur: DocumentKind) {
-    const file = pending[tur]
-    if (!file) {
-      setError('Önce dosya seçin.')
-      return
-    }
-    const type = file.type || guessType(file.name)
-    if (!ALLOWED_TYPES.includes(type) && !/\.(pdf|jpe?g|tiff?)$/i.test(file.name)) {
-      setError('Yalnızca PDF, JPEG veya TIFF yüklenebilir.')
-      return
-    }
-    const dataUrl = await readFile(file)
-    const doc: UploadedDoc = {
-      tur,
-      fileName: file.name,
-      fileType: type || file.type,
-      dataUrl,
-      uploadedAt: new Date().toISOString(),
-    }
-    onChange([...program.belgeler.filter((item) => item.tur !== tur), doc])
-    setPending((current) => ({ ...current, [tur]: null }))
-    setError('')
-  }
-
-  return (
-    <div>
-      <p className="notice">
-        Belgeler PDF, JPEG veya TIFF olmalıdır. Şablon doldurulup tarandıktan sonra yüklenir.
-      </p>
-      {error ? <p className="error">{error}</p> : null}
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Belge</th>
-              <th>Zorunlu</th>
-              <th>Dosya</th>
-              <th>İşlem</th>
-            </tr>
-          </thead>
-          <tbody>
-            {DOCUMENT_ROWS.map((row) => {
-              const uploaded = program.belgeler.find((item) => item.tur === row.tur)
-              return (
-                <tr key={row.tur}>
-                  <td>{row.ad}</td>
-                  <td>{row.zorunlu ? 'Evet' : 'Hayır'}</td>
-                  <td>
-                    {uploaded ? (
-                      <div>
-                        {uploaded.fileName}
-                        <div className="muted">{formatDate(uploaded.uploadedAt.slice(0, 10))}</div>
-                      </div>
-                    ) : (
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.tif,.tiff,application/pdf,image/jpeg,image/tiff"
-                        onChange={(event) =>
-                          setPending((current) => ({
-                            ...current,
-                            [row.tur]: event.target.files?.[0] ?? null,
-                          }))
-                        }
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <div className="row-actions">
-                      {!uploaded ? (
-                        <button className="btn btn-primary" type="button" onClick={() => void upload(row.tur)}>
-                          Yükle
-                        </button>
-                      ) : (
-                        <>
-                          <a className="btn btn-ghost" href={uploaded.dataUrl} target="_blank" rel="noreferrer">
-                            Görüntüle
-                          </a>
-                          <button
-                            className="btn btn-danger"
-                            type="button"
-                            onClick={() => onChange(program.belgeler.filter((item) => item.tur !== row.tur))}
-                          >
-                            Sil
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-      <div className="row-actions" style={{ marginTop: 12 }}>
-        <button className="btn btn-ghost" type="button" onClick={onNext}>
-          Sonraki sekme
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function guessType(name: string) {
-  if (name.toLowerCase().endsWith('.pdf')) return 'application/pdf'
-  if (/\.jpe?g$/i.test(name)) return 'image/jpeg'
-  if (/\.tiff?$/i.test(name)) return 'image/tiff'
-  return ''
-}
-
-function readFile(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = () => reject(reader.error)
-    reader.readAsDataURL(file)
-  })
 }
 
 function countWorkDays(program: Program) {

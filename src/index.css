@@ -776,6 +776,79 @@ tbody tr {
   width: 100%;
 }
 
+.doc-table {
+  font-size: 13px;
+  background: #eaf4fb;
+}
+
+.doc-table thead th {
+  background: #d7ebf7;
+  color: #1d4f8a;
+  text-transform: none;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.doc-table tbody tr {
+  cursor: default;
+}
+
+.doc-table td {
+  vertical-align: middle;
+  background: #eaf4fb;
+}
+
+.doc-info {
+  max-width: 420px;
+  color: #334155;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-doc,
+.btn-sil,
+.btn-sablon {
+  border: 0;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-doc {
+  background: #1d6fd8;
+}
+
+.btn-doc:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn-sil {
+  background: #e6b325;
+  color: #1f2937;
+}
+
+.btn-sil:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn-sablon {
+  background: transparent;
+  color: #1d6fd8;
+  padding: 6px 4px;
+}
+
 @media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: 1fr;

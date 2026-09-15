@@ -58,6 +58,9 @@ export type DocumentKind =
   | 'isveren_belgesi'
   | 'imza_yetki'
   | 'ortaklik'
+  | 'sigortali_belge'
+  | 'tehlikeli_egitim'
+  | 'diger'
 
 export interface Program {
   id: string
