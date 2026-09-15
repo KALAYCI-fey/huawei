@@ -7,11 +7,9 @@ const WEEK = ['PAZTESİ', 'SALI', 'ÇARŞAMBA', 'PERŞEMBE', 'CUMA', 'CUMARTESİ
 export function IepBilgilerForm({
   draft,
   setDraft,
-  fiiliGun,
 }: {
   draft: Program
   setDraft: (next: Program) => void
-  fiiliGun: number
 }) {
   const [meslekQuery, setMeslekQuery] = useState(draft.meslek)
   const ilceler = ILCELER[draft.uygulamaIl] ?? []
@@ -20,14 +18,6 @@ export function IepBilgilerForm({
     if (q.length < 3) return []
     return MESLEKLER.filter((item) => item.toLowerCase().includes(q))
   }, [meslekQuery])
-
-  const ozet = [
-    `IEP KES SAYISI: ${draft.iepKesSayisi}`,
-    `KONTENJAN SAYISI: ${draft.kontenjanSayisi}`,
-    `KONTENJANINDAN KULLANILAN: ${draft.kontenjanKullanilan}`,
-    `*${draft.kontenjanIl.toUpperCase() || 'İL'}: İşbaşı Eğitim Programı (IEP)`,
-    `KONTENJANINDAN KALAN: ${Math.max(draft.kontenjanSayisi - draft.kontenjanKullanilan, 0)}`,
-  ].join('\n')
 
   return (
     <div className="iep-sheet">
@@ -221,25 +211,6 @@ export function IepBilgilerForm({
           onChange={(devamHafta) => setDraft({ ...draft, devamHafta })}
         />
         <WeekRow label="Son Hafta :" value={draft.sonHafta} onChange={(sonHafta) => setDraft({ ...draft, sonHafta })} />
-        <p className="iep-info">
-          Resmi tatillerde ve bayram tatillerinde il istihdam ve mesleki eğitim kurulunun onayı alınmadan
-          program düzenlenemez. Konuyla ilgili başvurunun şartları taşıyıp taşımadığının kontrol edilmesi
-          gerekmektedir.
-        </p>
-        <Field label="Fiili Gün:">
-          <input className="readonly" readOnly value={fiiliGun} />
-        </Field>
-        <Field label="Fiili Dörtte Birlik Süre Tarihi:">
-          <input
-            type="date"
-            className="readonly"
-            readOnly
-            value={draft.fiiliDortteBirlikTarih}
-          />
-        </Field>
-        <Field label={`Kontenjan İl Özet Bilgi (${draft.kontenjanIl || 'İL'}):`}>
-          <textarea className="readonly ozet" readOnly rows={7} value={ozet} />
-        </Field>
       </div>
     </div>
   )

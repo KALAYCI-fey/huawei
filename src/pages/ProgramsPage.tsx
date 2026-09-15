@@ -227,7 +227,7 @@ function ApplicationEditor({
 
       {tab === 'bilgiler' ? (
         <form onSubmit={save}>
-          <IepBilgilerForm draft={draft} setDraft={setDraft} fiiliGun={fiiliGun} />
+          <IepBilgilerForm draft={draft} setDraft={setDraft} />
           <div className="row-actions" style={{ marginTop: 16 }}>
             <button className="btn btn-primary" type="submit">
               Kaydet
