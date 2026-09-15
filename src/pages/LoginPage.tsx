@@ -6,7 +6,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const { workplaces } = useAppState()
   const [panel, setPanel] = useState<'kapali' | 'giris' | 'firma'>('kapali')
-  const [username, setUsername] = useState('')
+  const [tcKimlikNo, setTcKimlikNo] = useState('')
   const [password, setPassword] = useState('')
   const [firmaId, setFirmaId] = useState('')
   const [error, setError] = useState('')
@@ -17,8 +17,8 @@ export function LoginPage() {
 
   function onCredentials(event: FormEvent) {
     event.preventDefault()
-    if (!credentialsOk(username, password)) {
-      setError('Kullanıcı adı veya şifre hatalı. Demo: isveren / demo123')
+    if (!credentialsOk(tcKimlikNo, password)) {
+      setError('T.C. kimlik no veya şifre hatalı.')
       return
     }
     setError('')
@@ -104,45 +104,15 @@ export function LoginPage() {
                 Yeni İlan
               </button>
             </div>
-
-            {panel === 'giris' ? (
-              <form className="esube-login" onSubmit={onCredentials}>
-                <p className="muted">İşveren giriş bilgilerini bu alana girin. Demo: isveren / demo123</p>
-                <label>
-                  Kullanıcı
-                  <input
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    autoComplete="username"
-                  />
-                </label>
-                <label>
-                  Şifre
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    autoComplete="current-password"
-                  />
-                </label>
-                {error && panel === 'giris' ? <p className="error">{error}</p> : null}
-                <button className="esube-submit" type="submit">
-                  Giriş
-                </button>
-              </form>
-            ) : (
-              <>
-                <button className="esube-link" type="button" disabled>
-                  Bireysel İşveren Üye Ol
-                </button>
-                <button className="esube-link" type="button" disabled>
-                  Danışmanım Kim?
-                </button>
-                <button className="esube-link" type="button" disabled>
-                  İşveren olarak kayıtlı mıyım?
-                </button>
-              </>
-            )}
+            <button className="esube-link" type="button" disabled>
+              Bireysel İşveren Üye Ol
+            </button>
+            <button className="esube-link" type="button" disabled>
+              Danışmanım Kim?
+            </button>
+            <button className="esube-link" type="button" disabled>
+              İşveren olarak kayıtlı mıyım?
+            </button>
           </section>
         </div>
 
@@ -160,6 +130,71 @@ export function LoginPage() {
           Hizmet Noktası Giriş
         </button>
       </div>
+
+      {panel === 'giris' ? (
+        <div className="modal-backdrop">
+          <form className="iskur-modal" onSubmit={onCredentials}>
+            <div className="iskur-modal-title">
+              <h1>İşveren Giriş</h1>
+              <button type="button" className="iskur-x" onClick={() => setPanel('kapali')}>
+                ×
+              </button>
+            </div>
+            <div className="iskur-modal-body">
+              <div className="iskur-row">
+                <label htmlFor="tc">T.C. Kimlik No</label>
+                <input
+                  id="tc"
+                  inputMode="numeric"
+                  maxLength={11}
+                  value={tcKimlikNo}
+                  onChange={(event) => setTcKimlikNo(event.target.value.replace(/\D/g, '').slice(0, 11))}
+                  autoComplete="username"
+                />
+              </div>
+              <div className="iskur-row">
+                <label htmlFor="password">Şifre</label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete="current-password"
+                />
+              </div>
+              <p className="iskur-links">
+                <button type="button" disabled>
+                  Yeni Üye
+                </button>
+                <span>|</span>
+                <button type="button" disabled>
+                  Şifremi Unuttum
+                </button>
+              </p>
+              {error ? <p className="error light">{error}</p> : null}
+              <div className="iskur-actions stacked">
+                <button className="iskur-btn" type="submit">
+                  İşveren Giriş
+                </button>
+                <button
+                  className="iskur-edevlet"
+                  type="button"
+                  onClick={() =>
+                    setError('e-Devlet girişi bu yerel uygulamada kapalıdır; resmi e-Devlet veya e-Şube kullanılmaz.')
+                  }
+                >
+                  e-Devlet ile Giriş
+                </button>
+              </div>
+            </div>
+            <div className="iskur-modal-foot">
+              <button className="iskur-kapat" type="button" onClick={() => setPanel('kapali')}>
+                Kapat
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
 
       {panel === 'firma' ? (
         <div className="modal-backdrop">

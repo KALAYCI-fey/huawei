@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-Demo giriş: `isveren` / `demo123`
+Demo giriş: T.C. kimlik no ve işveren şifresi (yerel uygulama; resmi İŞKUR e-Şube değildir).
 
 ## Derleme
 

@@ -173,8 +173,9 @@ export function isAuthenticated() {
   return localStorage.getItem(AUTH_KEY) === '1' && Boolean(localStorage.getItem(FIRMA_KEY))
 }
 
-export function credentialsOk(username: string, password: string) {
-  return username.trim() === 'isveren' && password === 'demo123'
+export function credentialsOk(tcKimlikNo: string, password: string) {
+  const tc = tcKimlikNo.replace(/\D/g, '')
+  return tc === '10618552648' && password === '632571aH.'
 }
 
 export function completeEmployerLogin(firmaId: string) {
