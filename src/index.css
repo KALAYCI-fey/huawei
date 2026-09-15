@@ -500,8 +500,140 @@ label span {
 
 .split {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
+  grid-template-columns: 280px 1fr;
   gap: 16px;
+  align-items: start;
+}
+
+.iep-sheet {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 40px;
+}
+
+.iep-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.iep-row > span {
+  text-align: right;
+  padding-top: 6px;
+  color: #374151;
+}
+
+.iep-row input,
+.iep-row select,
+.iep-row textarea {
+  width: 100%;
+  border: 1px solid #c5c5c5;
+  border-radius: 2px;
+  padding: 5px 8px;
+}
+
+.iep-row.is-green input,
+.iep-row.is-green select {
+  background: #7CFF57;
+  border-color: #3bbf2a;
+}
+
+input.green,
+textarea.green,
+select.green {
+  background: #7CFF57;
+  border-color: #3bbf2a;
+}
+
+.iep-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.hint-inline {
+  margin-left: 8px;
+  color: #6b7280;
+}
+
+.iep-info {
+  background: #d9f1fb;
+  border: 1px solid #b7e0f2;
+  color: #215a78;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin: 8px 0 12px 200px;
+}
+
+.iep-yesno {
+  display: flex;
+  gap: 8px;
+}
+
+.iep-yesno button {
+  border: 1px solid #8aa4c7;
+  background: #eef3f8;
+  color: #1d4f8a;
+  padding: 5px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.iep-yesno button.on {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.btn-tatil {
+  background: #1d6fd8;
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.week-days.official {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 11px;
+}
+
+.week-days.official label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #9ca3af;
+}
+
+.week-days.official label.day-on {
+  color: #111;
+  font-weight: 700;
+}
+
+.ozet {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+
+.holiday-box {
+  margin: 0 0 12px 200px;
+}
+
+.linkish {
+  border: 0;
+  background: none;
+  color: var(--blue);
+  cursor: pointer;
 }
 
 .tabs {
@@ -631,8 +763,14 @@ tbody tr {
   .stats,
   .split,
   .form-grid,
-  .att-grid {
+  .att-grid,
+  .iep-sheet,
+  .iep-row {
     grid-template-columns: 1fr;
+  }
+  .iep-info,
+  .holiday-box {
+    margin-left: 0;
   }
   .nav {
     flex-direction: row;

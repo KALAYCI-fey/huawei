@@ -77,7 +77,19 @@ export interface Program {
   kontenjanIl: string
   kontenjanIlce: string
   uygulamaIl: string
+  uygulamaIlce: string
   uygulamaAdres: string
+  ogrenimAlt: string
+  ogrenimUst: string
+  yasMin: number
+  yasMax: number
+  kursDurum: string
+  basvuruTarih: string
+  tatilGunleri: string[]
+  fiiliDortteBirlikTarih: string
+  iepKesSayisi: number
+  kontenjanSayisi: number
+  kontenjanKullanilan: number
   ayniMeslekteSigortali: YesNo
   imalatBilisim: YesNo
   tehlikeliMeslek: YesNo

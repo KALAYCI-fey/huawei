@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react'
+import { IepBilgilerForm } from '../components/IepBilgilerForm'
 import { ProgramBadge } from '../components/Badges'
 import { formatDate } from '../format'
 import {
@@ -12,13 +13,10 @@ import {
 import type {
   DocumentKind,
   Program,
-  ProgramStatus,
   UploadedDoc,
   Workplace,
-  YesNo,
 } from '../types'
 
-const WEEK_LABELS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
 const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/tiff', 'image/tif']
 
 const DOCUMENT_ROWS: { tur: DocumentKind; ad: string; zorunlu: boolean }[] = [
@@ -51,7 +49,19 @@ function emptyProgram(firma: Workplace | undefined): Program {
     kontenjanIl: firma?.il ?? '',
     kontenjanIlce: firma?.ilce ?? '',
     uygulamaIl: firma?.il ?? '',
+    uygulamaIlce: firma?.ilce ?? '',
     uygulamaAdres: firma?.adres ?? '',
+    ogrenimAlt: 'İlköğretim',
+    ogrenimUst: 'Lisans',
+    yasMin: 18,
+    yasMax: 50,
+    kursDurum: '',
+    basvuruTarih: '',
+    tatilGunleri: [],
+    fiiliDortteBirlikTarih: '',
+    iepKesSayisi: 0,
+    kontenjanSayisi: 0,
+    kontenjanKullanilan: 0,
     ayniMeslekteSigortali: '',
     imalatBilisim: '',
     tehlikeliMeslek: '',
@@ -227,174 +237,9 @@ function ApplicationEditor({
       </div>
 
       {tab === 'bilgiler' ? (
-        <form className="form-grid" onSubmit={save}>
-          <label>
-            <span>Başvuru numarası</span>
-            <input className="readonly" readOnly value={draft.iskurDosyaNo} />
-          </label>
-          <label>
-            <span>Kurs numarası</span>
-            <input className="readonly" readOnly value={draft.kursNo || 'Sistem atayacak'} />
-          </label>
-          <label>
-            <span>Başvuru durumu</span>
-            <select
-              className="readonly"
-              value={draft.status}
-              onChange={(event) => setDraft({ ...draft, status: event.target.value as ProgramStatus })}
-            >
-              <option value="taslak">Yeni / taslak</option>
-              <option value="basvuru">Gönderildi</option>
-              <option value="onaylandi">Kabul edildi</option>
-              <option value="devam">Program başladı</option>
-              <option value="tamamlandi">Tamamlandı</option>
-              <option value="iptal">Reddedildi / iptal</option>
-            </select>
-          </label>
-          <label>
-            <span>Fiili gün</span>
-            <input className="readonly" readOnly value={fiiliGun} />
-          </label>
-          <label>
-            <span>Kontenjan il</span>
-            <input
-              className="green"
-              value={draft.kontenjanIl}
-              onChange={(event) => setDraft({ ...draft, kontenjanIl: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Kontenjan ilçe</span>
-            <input
-              className="green"
-              value={draft.kontenjanIlce}
-              onChange={(event) => setDraft({ ...draft, kontenjanIlce: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Uygulama ili</span>
-            <input
-              className="green"
-              value={draft.uygulamaIl}
-              onChange={(event) => setDraft({ ...draft, uygulamaIl: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Uygulama adresi</span>
-            <input
-              className="green"
-              value={draft.uygulamaAdres}
-              onChange={(event) => setDraft({ ...draft, uygulamaAdres: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Meslek</span>
-            <input
-              className="green"
-              required
-              value={draft.meslek}
-              onChange={(event) => setDraft({ ...draft, meslek: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Meslek kodu</span>
-            <input
-              className="green"
-              value={draft.meslekKodu}
-              onChange={(event) => setDraft({ ...draft, meslekKodu: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Başlangıç tarihi</span>
-            <input
-              className="green"
-              type="date"
-              value={draft.baslangic}
-              onChange={(event) => setDraft({ ...draft, baslangic: event.target.value })}
-            />
-          </label>
-          <label>
-            <span>Bitiş tarihi</span>
-            <input
-              className="green"
-              type="date"
-              value={draft.bitis}
-              onChange={(event) => setDraft({ ...draft, bitis: event.target.value })}
-            />
-          </label>
-          <YesNoField
-            label="Aynı veya yakın meslekte işyerinizde sigortalınız var mı?"
-            value={draft.ayniMeslekteSigortali}
-            onChange={(value) => setDraft({ ...draft, ayniMeslekteSigortali: value })}
-          />
-          <YesNoField
-            label="İmalat / bilişim kapsamında mı?"
-            value={draft.imalatBilisim}
-            onChange={(value) => setDraft({ ...draft, imalatBilisim: value })}
-          />
-          <YesNoField
-            label="Tehlikeli meslek kapsamında mı?"
-            value={draft.tehlikeliMeslek}
-            onChange={(value) => setDraft({ ...draft, tehlikeliMeslek: value })}
-          />
-          <YesNoField
-            label="Program ilanı yayınlansın mı?"
-            value={draft.programIlani}
-            onChange={(value) => setDraft({ ...draft, programIlani: value })}
-          />
-          <label>
-            <span>Erkek kursiyer</span>
-            <input
-              className="green"
-              type="number"
-              min={0}
-              value={draft.erkekKursiyer}
-              onChange={(event) => setDraft({ ...draft, erkekKursiyer: Number(event.target.value) })}
-            />
-          </label>
-          <label>
-            <span>Kadın kursiyer</span>
-            <input
-              className="green"
-              type="number"
-              min={0}
-              value={draft.kadinKursiyer}
-              onChange={(event) => setDraft({ ...draft, kadinKursiyer: Number(event.target.value) })}
-            />
-          </label>
-          <label>
-            <span>Çalışan sayısı</span>
-            <input className="readonly" readOnly value={draft.calisanSayisi} />
-          </label>
-          <label>
-            <span>Kalan kontenjan</span>
-            <input className="readonly" readOnly value={draft.kalanKontenjan} />
-          </label>
-          <WeekRow
-            label="İlk hafta günleri"
-            value={draft.ilkHafta}
-            onChange={(value) => setDraft({ ...draft, ilkHafta: value })}
-          />
-          <WeekRow
-            label="Devam eden haftalar"
-            value={draft.devamHafta}
-            onChange={(value) => setDraft({ ...draft, devamHafta: value })}
-          />
-          <WeekRow
-            label="Son hafta günleri"
-            value={draft.sonHafta}
-            onChange={(value) => setDraft({ ...draft, sonHafta: value })}
-          />
-          <label className="full">
-            <span>Açıklama</span>
-            <textarea
-              className="green"
-              rows={3}
-              value={draft.aciklama}
-              onChange={(event) => setDraft({ ...draft, aciklama: event.target.value })}
-            />
-          </label>
-          <div className="full row-actions">
+        <form onSubmit={save}>
+          <IepBilgilerForm draft={draft} setDraft={setDraft} fiiliGun={fiiliGun} />
+          <div className="row-actions" style={{ marginTop: 16 }}>
             <button className="btn btn-primary" type="submit">
               Kaydet
             </button>
@@ -406,9 +251,8 @@ function ApplicationEditor({
             </button>
           </div>
           {firma ? (
-            <p className="notice full">
-              Seçilen firma: {firma.unvan}. Yeşil alanlar işveren tarafından doldurulur; gri alanlar sistem
-              bilgisidir.
+            <p className="notice" style={{ marginTop: 12 }}>
+              Seçilen firma: {firma.unvan}. Yeşil alanlar doldurulur; gri alanlar sistem tarafından gelir.
             </p>
           ) : null}
         </form>
@@ -450,63 +294,6 @@ function ApplicationEditor({
           {participants.length === 0 ? <div className="empty">Henüz katılımcı yok. Kursiyerler ekranından ekleyin.</div> : null}
         </div>
       ) : null}
-    </div>
-  )
-}
-
-function YesNoField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string
-  value: YesNo
-  onChange: (value: YesNo) => void
-}) {
-  const name = label
-  return (
-    <fieldset className="yesno full">
-      <legend>{label}</legend>
-      <label>
-        <input type="radio" name={name} checked={value === 'evet'} onChange={() => onChange('evet')} />
-        Evet
-      </label>
-      <label>
-        <input type="radio" name={name} checked={value === 'hayir'} onChange={() => onChange('hayir')} />
-        Hayır
-      </label>
-    </fieldset>
-  )
-}
-
-function WeekRow({
-  label,
-  value,
-  onChange,
-}: {
-  label: string
-  value: boolean[]
-  onChange: (value: boolean[]) => void
-}) {
-  return (
-    <div className="full week-row">
-      <span>{label}</span>
-      <div className="week-days">
-        {WEEK_LABELS.map((day, index) => (
-          <label key={day}>
-            <input
-              type="checkbox"
-              checked={Boolean(value[index])}
-              onChange={(event) => {
-                const next = [...value]
-                next[index] = event.target.checked
-                onChange(next)
-              }}
-            />
-            {day}
-          </label>
-        ))}
-      </div>
     </div>
   )
 }
@@ -654,6 +441,8 @@ function countWorkDays(program: Program) {
     const isFirstWeek = date.getTime() - start.getTime() < 7 * 86400000
     const isLastWeek = end.getTime() - date.getTime() < 7 * 86400000
     const flags = isFirstWeek ? program.ilkHafta : isLastWeek ? program.sonHafta : program.devamHafta
+    const iso = date.toISOString().slice(0, 10)
+    if (program.tatilGunleri?.includes(iso)) continue
     if (flags[index]) count += 1
   }
   return count

@@ -2,6 +2,23 @@ import type { AppState } from './types'
 
 const weekdays = [true, true, true, true, true, false, false]
 
+function extraIep(ilce: string) {
+  return {
+    uygulamaIlce: ilce,
+    ogrenimAlt: 'İlköğretim',
+    ogrenimUst: 'Lisans',
+    yasMin: 18,
+    yasMax: 50,
+    kursDurum: '',
+    basvuruTarih: '2026-09-14',
+    tatilGunleri: [] as string[],
+    fiiliDortteBirlikTarih: '2026-10-08',
+    iepKesSayisi: 92,
+    kontenjanSayisi: 28,
+    kontenjanKullanilan: 8,
+  }
+}
+
 export const seedState: AppState = {
   employer: {
     unvan: 'Örnek Üretim A.Ş.',
@@ -51,6 +68,7 @@ export const seedState: AppState = {
       kontenjanIl: 'İstanbul',
       kontenjanIlce: 'Pendik',
       uygulamaIl: 'İstanbul',
+      ...extraIep('Pendik'),
       uygulamaAdres: 'Sanayi Mah. Örnek Cad. No:12 Atölye-1',
       ayniMeslekteSigortali: 'evet',
       imalatBilisim: 'evet',
@@ -83,6 +101,7 @@ export const seedState: AppState = {
       kontenjanIl: 'İstanbul',
       kontenjanIlce: 'Pendik',
       uygulamaIl: 'İstanbul',
+      ...extraIep('Pendik'),
       uygulamaAdres: 'Kaynak atölyesi',
       ayniMeslekteSigortali: 'evet',
       imalatBilisim: 'evet',
@@ -115,6 +134,7 @@ export const seedState: AppState = {
       kontenjanIl: 'İstanbul',
       kontenjanIlce: 'Tuzla',
       uygulamaIl: 'İstanbul',
+      ...extraIep('Tuzla'),
       uygulamaAdres: 'Merkez Depo',
       ayniMeslekteSigortali: 'hayir',
       imalatBilisim: 'hayir',

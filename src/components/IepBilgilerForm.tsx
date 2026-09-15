@@ -1,0 +1,376 @@
+import { useMemo, useState, type ReactNode } from 'react'
+import { ILLER, ILCELER, MESLEKLER, OGRENIM } from '../data/lookups'
+import type { Program, YesNo } from '../types'
+
+const WEEK = ['PAZTESİ', 'SALI', 'ÇARŞAMBA', 'PERŞEMBE', 'CUMA', 'CUMARTESİ', 'PAZAR']
+
+export function IepBilgilerForm({
+  draft,
+  setDraft,
+  fiiliGun,
+}: {
+  draft: Program
+  setDraft: (next: Program) => void
+  fiiliGun: number
+}) {
+  const [meslekQuery, setMeslekQuery] = useState(draft.meslek)
+  const [holidayOpen, setHolidayOpen] = useState(false)
+  const [holiday, setHoliday] = useState('')
+  const ilceler = ILCELER[draft.uygulamaIl] ?? []
+  const meslekler = useMemo(() => {
+    const q = meslekQuery.trim().toLowerCase()
+    if (q.length < 3) return []
+    return MESLEKLER.filter((item) => item.toLowerCase().includes(q))
+  }, [meslekQuery])
+
+  const ozet = [
+    `IEP KES SAYISI: ${draft.iepKesSayisi}`,
+    `KONTENJAN SAYISI: ${draft.kontenjanSayisi}`,
+    `KONTENJANINDAN KULLANILAN: ${draft.kontenjanKullanilan}`,
+    `*${draft.kontenjanIl.toUpperCase() || 'İL'}: İşbaşı Eğitim Programı (IEP)`,
+    `KONTENJANINDAN KALAN: ${Math.max(draft.kontenjanSayisi - draft.kontenjanKullanilan, 0)}`,
+  ].join('\n')
+
+  return (
+    <div className="iep-sheet">
+      <div>
+        <Field label="Başvuru Numarası:">
+          <input className="readonly" readOnly value={draft.iskurDosyaNo} />
+        </Field>
+        <Field label="Kurs Numarası:">
+          <input className="readonly" readOnly value={draft.kursNo} />
+        </Field>
+        <Field label="Başvuru Durum:">
+          <input className="readonly" readOnly value={statusText(draft.status)} />
+        </Field>
+        <Field label="Kurs Durum:">
+          <input className="readonly" readOnly value={draft.kursDurum} />
+        </Field>
+        <Field label="Başvuru Tarih:">
+          <input className="readonly" readOnly value={toTr(draft.basvuruTarih)} />
+        </Field>
+        <Field label="Kontenjan İl:" green>
+          <select
+            className="green"
+            value={draft.kontenjanIl}
+            onChange={(event) => setDraft({ ...draft, kontenjanIl: event.target.value })}
+          >
+            <option value="">Seçiniz</option>
+            {ILLER.map((il) => (
+              <option key={il} value={il}>
+                {il}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Uygulama İl:" green>
+          <select
+            className="green"
+            value={draft.uygulamaIl}
+            onChange={(event) =>
+              setDraft({
+                ...draft,
+                uygulamaIl: event.target.value,
+                uygulamaIlce: '',
+              })
+            }
+          >
+            <option value="">Seçiniz</option>
+            {ILLER.map((il) => (
+              <option key={il} value={il}>
+                {il}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Uygulama İlçe:" green>
+          <select
+            className="green"
+            value={draft.uygulamaIlce}
+            onChange={(event) => setDraft({ ...draft, uygulamaIlce: event.target.value })}
+          >
+            <option value="">Seçiniz</option>
+            {ilceler.map((ilce) => (
+              <option key={ilce} value={ilce}>
+                {ilce}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Uygulama Adres:" green>
+          <input
+            className="green"
+            value={draft.uygulamaAdres}
+            onChange={(event) => setDraft({ ...draft, uygulamaAdres: event.target.value })}
+          />
+        </Field>
+        <Field label="Meslek:" green>
+          <div>
+            <input
+              className="green"
+              list="meslek-list"
+              placeholder="Üç Harf Giriniz."
+              value={meslekQuery}
+              onChange={(event) => {
+                setMeslekQuery(event.target.value)
+                setDraft({ ...draft, meslek: event.target.value })
+              }}
+            />
+            <datalist id="meslek-list">
+              {meslekler.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
+            <small className="hint-inline">Üç Harf Giriniz.</small>
+          </div>
+        </Field>
+        <Field label="Öğrenim Durumu Alt/Üst:" green>
+          <div className="iep-pair">
+            <select
+              className="green"
+              value={draft.ogrenimAlt}
+              onChange={(event) => setDraft({ ...draft, ogrenimAlt: event.target.value })}
+            >
+              {OGRENIM.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+            <select
+              className="green"
+              value={draft.ogrenimUst}
+              onChange={(event) => setDraft({ ...draft, ogrenimUst: event.target.value })}
+            >
+              {OGRENIM.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+        </Field>
+        {draft.meslek ? (
+          <p className="iep-info">
+            “{draft.meslek}” mesleği için minimum öğrenim durumu “{draft.ogrenimAlt || 'İlköğretim'}” olarak
+            girilmelidir.
+          </p>
+        ) : null}
+        <Field label="Yaş Aralığı:" green>
+          <div className="iep-pair">
+            <input
+              className="green"
+              type="number"
+              min={15}
+              max={65}
+              value={draft.yasMin}
+              onChange={(event) => setDraft({ ...draft, yasMin: Number(event.target.value) })}
+            />
+            <input
+              className="green"
+              type="number"
+              min={15}
+              max={65}
+              value={draft.yasMax}
+              onChange={(event) => setDraft({ ...draft, yasMax: Number(event.target.value) })}
+            />
+          </div>
+        </Field>
+        <Field label="Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?">
+          <YesNoButtons
+            value={draft.ayniMeslekteSigortali}
+            onChange={(value) => setDraft({ ...draft, ayniMeslekteSigortali: value })}
+          />
+        </Field>
+      </div>
+
+      <div>
+        <Field label="Başlangıç Tarihi:" green>
+          <input
+            className="green"
+            type="date"
+            value={draft.baslangic}
+            onChange={(event) => setDraft(withDates(draft, { baslangic: event.target.value }))}
+          />
+        </Field>
+        <Field label="Bitiş Tarihi:" green>
+          <input
+            className="green"
+            type="date"
+            value={draft.bitis}
+            onChange={(event) => setDraft(withDates(draft, { bitis: event.target.value }))}
+          />
+        </Field>
+        <Field label="Tatil Günleri:">
+          <button className="btn-tatil" type="button" onClick={() => setHolidayOpen((open) => !open)}>
+            Tatil Günlerini Seç
+          </button>
+        </Field>
+        {holidayOpen ? (
+          <div className="holiday-box">
+            <div className="iep-pair">
+              <input type="date" value={holiday} onChange={(event) => setHoliday(event.target.value)} />
+              <button
+                className="btn btn-ghost"
+                type="button"
+                onClick={() => {
+                  if (!holiday || draft.tatilGunleri.includes(holiday)) return
+                  setDraft({ ...draft, tatilGunleri: [...draft.tatilGunleri, holiday].sort() })
+                  setHoliday('')
+                }}
+              >
+                Ekle
+              </button>
+            </div>
+            <ul>
+              {draft.tatilGunleri.map((day) => (
+                <li key={day}>
+                  {toTr(day)}{' '}
+                  <button
+                    type="button"
+                    className="linkish"
+                    onClick={() =>
+                      setDraft({
+                        ...draft,
+                        tatilGunleri: draft.tatilGunleri.filter((item) => item !== day),
+                      })
+                    }
+                  >
+                    kaldır
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        <WeekRow label="İlk Hafta :" value={draft.ilkHafta} onChange={(ilkHafta) => setDraft({ ...draft, ilkHafta })} />
+        <WeekRow
+          label="Devam Eden Haftalar :"
+          value={draft.devamHafta}
+          onChange={(devamHafta) => setDraft({ ...draft, devamHafta })}
+        />
+        <WeekRow label="Son Hafta :" value={draft.sonHafta} onChange={(sonHafta) => setDraft({ ...draft, sonHafta })} />
+        <p className="iep-info">
+          Resmi tatillerde ve bayram tatillerinde il istihdam ve mesleki eğitim kurulunun onayı alınmadan
+          program düzenlenemez. Konuyla ilgili başvurunun şartları taşıyıp taşımadığının kontrol edilmesi
+          gerekmektedir.
+        </p>
+        <Field label="Fiili Gün:">
+          <input className="readonly" readOnly value={fiiliGun} />
+        </Field>
+        <Field label="Fiili Dörtte Birlik Süre Tarihi:">
+          <input
+            type="date"
+            className="readonly"
+            readOnly
+            value={draft.fiiliDortteBirlikTarih}
+          />
+        </Field>
+        <Field label={`Kontenjan İl Özet Bilgi (${draft.kontenjanIl || 'İL'}):`}>
+          <textarea className="readonly ozet" readOnly rows={7} value={ozet} />
+        </Field>
+      </div>
+    </div>
+  )
+}
+
+function Field({
+  label,
+  children,
+  green,
+}: {
+  label: string
+  children: ReactNode
+  green?: boolean
+}) {
+  return (
+    <div className={`iep-row ${green ? 'is-green' : ''}`}>
+      <span>{label}</span>
+      {children}
+    </div>
+  )
+}
+
+function YesNoButtons({
+  value,
+  onChange,
+}: {
+  value: YesNo
+  onChange: (value: YesNo) => void
+}) {
+  return (
+    <div className="iep-yesno">
+      <button type="button" className={value === 'evet' ? 'on' : ''} onClick={() => onChange('evet')}>
+        EVET
+      </button>
+      <button type="button" className={value === 'hayir' ? 'on' : ''} onClick={() => onChange('hayir')}>
+        HAYIR
+      </button>
+    </div>
+  )
+}
+
+function WeekRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: boolean[]
+  onChange: (value: boolean[]) => void
+}) {
+  return (
+    <div className="iep-row">
+      <span>{label}</span>
+      <div className="week-days official">
+        {WEEK.map((day, index) => (
+          <label key={day} className={value[index] ? 'day-on' : ''}>
+            <input
+              type="checkbox"
+              checked={Boolean(value[index])}
+              onChange={(event) => {
+                const next = [...value]
+                next[index] = event.target.checked
+                onChange(next)
+              }}
+            />
+            {day}
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function statusText(status: Program['status']) {
+  const map = {
+    taslak: 'YENİ',
+    basvuru: 'GÖNDERİLDİ',
+    onaylandi: 'KABUL EDİLDİ',
+    devam: 'BAŞLADI',
+    tamamlandi: 'TAMAMLANDI',
+    iptal: 'REDDEDİLDİ',
+  }
+  return map[status]
+}
+
+function toTr(value: string) {
+  if (!value) return ''
+  const [y, m, d] = value.split('-')
+  if (!d) return value
+  return `${d}.${m}.${y}`
+}
+
+function withDates(draft: Program, patch: Partial<Program>): Program {
+  const next = { ...draft, ...patch }
+  if (next.baslangic && next.bitis) {
+    const start = new Date(`${next.baslangic}T00:00:00`)
+    const end = new Date(`${next.bitis}T00:00:00`)
+    const span = end.getTime() - start.getTime()
+    if (span > 0) {
+      const quarter = new Date(start.getTime() + span / 4)
+      next.fiiliDortteBirlikTarih = quarter.toISOString().slice(0, 10)
+    }
+  }
+  return next
+}

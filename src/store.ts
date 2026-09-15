@@ -9,7 +9,7 @@ import type {
   Trainee,
 } from './types'
 
-const STORAGE_KEY = 'iskur-isbasi-state-v2'
+const STORAGE_KEY = 'iskur-isbasi-state-v3'
 const AUTH_KEY = 'iskur-isbasi-auth'
 const FIRMA_KEY = 'iskur-isbasi-firma'
 
@@ -32,6 +32,7 @@ function loadState(): AppState {
         ilkHafta: item.ilkHafta ?? [true, true, true, true, true, false, false],
         devamHafta: item.devamHafta ?? [true, true, true, true, true, false, false],
         sonHafta: item.sonHafta ?? [true, true, true, true, true, false, false],
+        tatilGunleri: item.tatilGunleri ?? [],
       })),
     }
   } catch {
