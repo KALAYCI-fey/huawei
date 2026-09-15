@@ -22,10 +22,9 @@ export function IepBilgilerForm({
   return (
     <div className="iep-sheet">
       <div>
-        <Field label="Kontenjan İl:" green>
+        <Field label="Kontenjan İl:">
           <select
-            className="green"
-            value={draft.kontenjanIl}
+             value={draft.kontenjanIl}
             onChange={(event) => setDraft({ ...draft, kontenjanIl: event.target.value })}
           >
             <option value="">Seçiniz</option>
@@ -36,10 +35,9 @@ export function IepBilgilerForm({
             ))}
           </select>
         </Field>
-        <Field label="Uygulama İl:" green>
+        <Field label="Uygulama İl:">
           <select
-            className="green"
-            value={draft.uygulamaIl}
+             value={draft.uygulamaIl}
             onChange={(event) =>
               setDraft({
                 ...draft,
@@ -56,10 +54,9 @@ export function IepBilgilerForm({
             ))}
           </select>
         </Field>
-        <Field label="Uygulama İlçe:" green>
+        <Field label="Uygulama İlçe:">
           <select
-            className="green"
-            value={draft.uygulamaIlce}
+             value={draft.uygulamaIlce}
             onChange={(event) => setDraft({ ...draft, uygulamaIlce: event.target.value })}
           >
             <option value="">Seçiniz</option>
@@ -70,18 +67,16 @@ export function IepBilgilerForm({
             ))}
           </select>
         </Field>
-        <Field label="Uygulama Adres:" green>
+        <Field label="Uygulama Adres:">
           <input
-            className="green"
-            value={draft.uygulamaAdres}
+             value={draft.uygulamaAdres}
             onChange={(event) => setDraft({ ...draft, uygulamaAdres: event.target.value })}
           />
         </Field>
-        <Field label="Meslek:" green>
+        <Field label="Meslek:">
           <div>
             <input
-              className="green"
-              list="meslek-list"
+                 list="meslek-list"
               placeholder="Üç Harf Giriniz."
               value={meslekQuery}
               onChange={(event) => {
@@ -97,11 +92,10 @@ export function IepBilgilerForm({
             <small className="hint-inline">Üç Harf Giriniz.</small>
           </div>
         </Field>
-        <Field label="Öğrenim Durumu Alt/Üst:" green>
+        <Field label="Öğrenim Durumu Alt/Üst:">
           <div className="iep-pair">
             <select
-              className="green"
-              value={draft.ogrenimAlt}
+                 value={draft.ogrenimAlt}
               onChange={(event) => setDraft({ ...draft, ogrenimAlt: event.target.value })}
             >
               {OGRENIM.map((item) => (
@@ -111,8 +105,7 @@ export function IepBilgilerForm({
               ))}
             </select>
             <select
-              className="green"
-              value={draft.ogrenimUst}
+                 value={draft.ogrenimUst}
               onChange={(event) => setDraft({ ...draft, ogrenimUst: event.target.value })}
             >
               {OGRENIM.map((item) => (
@@ -123,19 +116,17 @@ export function IepBilgilerForm({
             </select>
           </div>
         </Field>
-        <Field label="Yaş Aralığı:" green>
+        <Field label="Yaş Aralığı:">
           <div className="iep-pair">
             <input
-              className="green"
-              type="number"
+                 type="number"
               min={15}
               max={65}
               value={draft.yasMin}
               onChange={(event) => setDraft({ ...draft, yasMin: Number(event.target.value) })}
             />
             <input
-              className="green"
-              type="number"
+                 type="number"
               min={15}
               max={65}
               value={draft.yasMax}
@@ -143,18 +134,17 @@ export function IepBilgilerForm({
             />
           </div>
         </Field>
-        <Field label="Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?:" green>
+        <Field label="Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?:">
           <YesNoToggle
             value={draft.ayniMeslekteSigortali}
             onChange={(value) => setDraft({ ...draft, ayniMeslekteSigortali: value })}
           />
         </Field>
-        <Field label="İstihdam Taahhüt Oranı:" green>
+        <Field label="İstihdam Taahhüt Oranı:">
           <div className="oran-row">
             <span>%</span>
             <input
-              className="green"
-              type="number"
+                 type="number"
               min={0}
               max={100}
               value={draft.istihdamTaahhutOran}
@@ -164,19 +154,19 @@ export function IepBilgilerForm({
             />
           </div>
         </Field>
-        <Field label="Geleceğin Mesleği Kapsamında:" green>
+        <Field label="Geleceğin Mesleği Kapsamında:">
           <YesNoToggle
             value={draft.geleceginMeslegi}
             onChange={(value) => setDraft({ ...draft, geleceginMeslegi: value })}
           />
         </Field>
-        <Field label="İmalat Bilişim Kapsamında:" green>
+        <Field label="İmalat Bilişim Kapsamında:">
           <YesNoToggle
             value={draft.imalatBilisim}
             onChange={(value) => setDraft({ ...draft, imalatBilisim: value })}
           />
         </Field>
-        <Field label="Tehlikeli Meslek:" green>
+        <Field label="Tehlikeli Meslek:">
           <YesNoToggle
             value={draft.tehlikeliMeslek}
             onChange={(value) => setDraft({ ...draft, tehlikeliMeslek: value })}
@@ -185,18 +175,16 @@ export function IepBilgilerForm({
       </div>
 
       <div>
-        <Field label="Başlangıç Tarihi:" green>
+        <Field label="Başlangıç Tarihi:">
           <input
-            className="green"
-            type="date"
+             type="date"
             value={draft.baslangic}
             onChange={(event) => setDraft(withDates(draft, { baslangic: event.target.value }))}
           />
         </Field>
-        <Field label="Bitiş Tarihi:" green>
+        <Field label="Bitiş Tarihi:">
           <input
-            className="green"
-            type="date"
+             type="date"
             value={draft.bitis}
             onChange={(event) => setDraft(withDates(draft, { bitis: event.target.value }))}
           />
@@ -216,14 +204,12 @@ export function IepBilgilerForm({
 function Field({
   label,
   children,
-  green,
 }: {
   label: string
   children: ReactNode
-  green?: boolean
 }) {
   return (
-    <div className={`iep-row ${green ? 'is-green' : ''}`}>
+    <div className="iep-row">
       <span>{label}</span>
       {children}
     </div>

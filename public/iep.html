@@ -32,11 +32,8 @@
     .iep-row { display:grid; grid-template-columns:200px 1fr; gap:8px; margin-bottom:8px; }
     .iep-row > span { text-align:right; padding-top:6px; }
     .iep-row input, .iep-row select, .iep-row textarea { width:100%; padding:5px 8px; border:1px solid #c5c5c5; }
-    .green { background:var(--green) !important; border-color:#3bbf2a !important; }
-    .ro { background:#e8edf3; }
-    .pair { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .info { background:#d9f1fb; border:1px solid #b7e0f2; color:#215a78; padding:10px; margin:8px 0 12px 200px; font-size:12px; }
-    .yn { width:148px; height:28px; border:1px solid #3bbf2a; background:var(--green); display:grid; grid-template-columns:1fr 1fr; cursor:pointer; padding:0; font-weight:700; font-size:12px; }
+    .yn { width:148px; height:28px; border:1px solid #c5c5c5; background:#e8edf3; display:grid; grid-template-columns:1fr 1fr; cursor:pointer; padding:0; font-weight:700; font-size:12px; }
+    .yn.yes { background:#7cff57; border-color:#3bbf2a; }
     .yn span { display:grid; place-items:center; }
     .yn.yes .e, .yn.no .h { background:#fff; color:#111; }
     .yn.yes .h, .yn.no .e { color:transparent; }
@@ -100,30 +97,30 @@
         <div class="sheet">
           <div>
             <div class="iep-row"><span>Kontenjan İl:</span>
-              <select class="green"><option>İstanbul</option><option>Afyonkarahisar</option><option>Ankara</option></select>
+              <select><option>İstanbul</option><option>Afyonkarahisar</option><option>Ankara</option></select>
             </div>
             <div class="iep-row"><span>Uygulama İl:</span>
-              <select class="green" id="uygulamaIl"><option>İstanbul</option><option>Afyonkarahisar</option></select>
+              <select id="uygulamaIl"><option>İstanbul</option><option>Afyonkarahisar</option></select>
             </div>
             <div class="iep-row"><span>Uygulama İlçe:</span>
-              <select class="green"><option>Pendik</option><option>Tuzla</option><option>Afyonkarahisar Merkez</option></select>
+              <select><option>Pendik</option><option>Tuzla</option><option>Afyonkarahisar Merkez</option></select>
             </div>
-            <div class="iep-row"><span>Uygulama Adres:</span><input class="green" value="Sanayi Mah. Örnek Cad. No:12" /></div>
-            <div class="iep-row"><span>Meslek:</span><input class="green" placeholder="Üç Harf Giriniz." value="CNC Tezgah Operatörü" /></div>
+            <div class="iep-row"><span>Uygulama Adres:</span><input value="Sanayi Mah. Örnek Cad. No:12" /></div>
+            <div class="iep-row"><span>Meslek:</span><input placeholder="Üç Harf Giriniz." value="CNC Tezgah Operatörü" /></div>
             <div class="iep-row"><span>Öğrenim Durumu Alt/Üst:</span>
               <div class="pair">
-                <select class="green"><option>İlköğretim</option><option>Lise</option></select>
-                <select class="green"><option>Lisans</option><option>Lise</option></select>
+                <select><option>İlköğretim</option><option>Lise</option></select>
+                <select><option>Lisans</option><option>Lise</option></select>
               </div>
             </div>
             <div class="iep-row"><span>Yaş Aralığı:</span>
-              <div class="pair"><input class="green" type="number" value="18" /><input class="green" type="number" value="50" /></div>
+              <div class="pair"><input type="number" value="18" /><input type="number" value="50" /></div>
             </div>
             <div class="iep-row"><span>Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?:</span>
               <button type="button" class="yn yes" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
             </div>
             <div class="iep-row"><span>İstihdam Taahhüt Oranı:</span>
-              <div style="display:flex;gap:8px;align-items:center;max-width:160px"><span>%</span><input class="green" type="number" value="60" /></div>
+              <div style="display:flex;gap:8px;align-items:center;max-width:160px"><span>%</span><input type="number" value="60" /></div>
             </div>
             <div class="iep-row"><span>Geleceğin Mesleği Kapsamında:</span>
               <button type="button" class="yn no" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
@@ -136,8 +133,8 @@
             </div>
           </div>
           <div>
-            <div class="iep-row"><span>Başlangıç Tarihi:</span><input class="green" type="date" value="2026-09-17" /></div>
-            <div class="iep-row"><span>Bitiş Tarihi:</span><input class="green" type="date" value="2026-12-15" /></div>
+            <div class="iep-row"><span>Başlangıç Tarihi:</span><input type="date" value="2026-09-17" /></div>
+            <div class="iep-row"><span>Bitiş Tarihi:</span><input type="date" value="2026-12-15" /></div>
             <div class="iep-row"><span>İlk Hafta :</span>
               <div class="days"><label><input type="checkbox" /> PAZTESİ</label><label><input type="checkbox" /> SALI</label><label><input type="checkbox" checked /> ÇARŞAMBA</label><label><input type="checkbox" checked /> PERŞEMBE</label><label><input type="checkbox" checked /> CUMA</label><label><input type="checkbox" checked /> CUMARTESİ</label><label><input type="checkbox" /> PAZAR</label></div>
             </div>

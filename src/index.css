@@ -533,19 +533,7 @@ label span {
   border: 1px solid #c5c5c5;
   border-radius: 2px;
   padding: 5px 8px;
-}
-
-.iep-row.is-green input,
-.iep-row.is-green select {
-  background: #7CFF57;
-  border-color: #3bbf2a;
-}
-
-input.green,
-textarea.green,
-select.green {
-  background: #7CFF57;
-  border-color: #3bbf2a;
+  background: #fff;
 }
 
 .iep-pair {
@@ -583,8 +571,8 @@ select.green {
 .yn-switch {
   width: 148px;
   height: 28px;
-  border: 1px solid #3bbf2a;
-  background: #7cff57;
+  border: 1px solid #c5c5c5;
+  background: #e8edf3;
   border-radius: 3px;
   padding: 0;
   display: grid;
@@ -594,6 +582,11 @@ select.green {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
+}
+
+.yn-switch.yes {
+  background: #7cff57;
+  border-color: #3bbf2a;
 }
 
 .yn-switch span {
@@ -679,13 +672,6 @@ select.green {
   background: var(--navy);
   color: #fff;
   border-color: var(--navy);
-}
-
-input.green,
-textarea.green,
-select.green {
-  background: #e7f7ee;
-  border-color: #8ec9a6;
 }
 
 input.readonly,
