@@ -158,7 +158,7 @@
               <td>1</td><td>Talep Dilekçesi</td>
               <td>İlgili şablon dosyasını indirip ilgili alanları doldurduktan ve imzaladıktan sonra belgeyi sisteme yüklemeniz gerekmektedir.</td>
               <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> <button class="btn-sablon" type="button" id="sablon">Şablon indir</button></td>
+              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> <a class="btn-sablon" href="/sablonlar/talep-dilekcesi.docx" download="Talep_Dilekcesi.docx">Şablon indir</a></td>
             </tr>
             <tr>
               <td>2</td><td>İşveren Belgesi</td>
@@ -243,13 +243,6 @@
         btn.classList.toggle('no', yes)
       }
     })
-    document.getElementById('sablon').onclick = () => {
-      const blob = new Blob(['TALEP DİLEKÇESİ (ŞABLON)\n'], { type: 'text/plain' })
-      const a = document.createElement('a')
-      a.href = URL.createObjectURL(blob)
-      a.download = 'talep-dilekcesi-sablon.txt'
-      a.click()
-    }
   </script>
 </body>
 </html>

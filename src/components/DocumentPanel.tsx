@@ -89,27 +89,6 @@ export function DocumentPanel({
     setError('')
   }
 
-  function downloadTemplate() {
-    const content = `TALEP DİLEKÇESİ (ŞABLON)
-
-İşveren unvanı:
-Vergi no:
-İŞKUR İl Müdürlüğü'ne
-
-İşbaşı Eğitim Programı (İEP) kapsamında başvuru yapılması hususunda gereğini arz ederim.
-
-Tarih:
-İmza:
-`
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'talep-dilekcesi-sablon.txt'
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
   return (
     <div>
       <p className="notice">
@@ -178,9 +157,13 @@ Tarih:
                         Sil
                       </button>
                       {row.sablon ? (
-                        <button className="btn-sablon" type="button" onClick={downloadTemplate}>
+                        <a
+                          className="btn-sablon"
+                          href="/sablonlar/talep-dilekcesi.docx"
+                          download="Talep_Dilekcesi.docx"
+                        >
                           Şablon indir
-                        </button>
+                        </a>
                       ) : (
                         <span className="muted">--</span>
                       )}

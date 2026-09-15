@@ -833,6 +833,7 @@ tbody tr {
   background: transparent;
   color: #1d6fd8;
   padding: 6px 4px;
+  display: inline-block;
 }
 
 @media (max-width: 1100px) {
