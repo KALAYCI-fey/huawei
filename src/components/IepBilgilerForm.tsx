@@ -133,12 +133,6 @@ export function IepBilgilerForm({
             </select>
           </div>
         </Field>
-        {draft.meslek ? (
-          <p className="iep-info">
-            “{draft.meslek}” mesleği için minimum öğrenim durumu “{draft.ogrenimAlt || 'İlköğretim'}” olarak
-            girilmelidir.
-          </p>
-        ) : null}
         <Field label="Yaş Aralığı:" green>
           <div className="iep-pair">
             <input
