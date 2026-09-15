@@ -3,7 +3,7 @@ import type { DocumentKind, Program, UploadedDoc } from '../types'
 
 const ALLOWED = ['application/pdf', 'image/jpeg', 'image/tiff', 'image/tif']
 
-export const DOCUMENT_ROWS: {
+const DOCUMENT_ROWS: {
   no: number
   tur: DocumentKind
   ad: string
