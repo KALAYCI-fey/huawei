@@ -355,6 +355,172 @@ label span {
     linear-gradient(180deg, #0b2748, #12345f);
 }
 
+.esube {
+  min-height: 100vh;
+  background: #eef3f8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 40h80M40 0v80' stroke='%23d5e2ee' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+.esube-top {
+  background: linear-gradient(90deg, #0a3a6b, #1565a8);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+}
+
+.esube-brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.esube-brand small {
+  display: block;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.esube-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #fff;
+  color: #1565a8;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.esube-body {
+  max-width: 980px;
+  margin: 28px auto;
+  padding: 0 16px 40px;
+}
+
+.esube-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.esube-card {
+  background: #f7f9fb;
+  border: 1px solid #dbe4ee;
+  border-radius: 4px;
+  padding: 22px 18px 18px;
+  text-align: center;
+  min-height: 360px;
+}
+
+.esube-card h2 {
+  margin: 0 0 8px;
+  color: #1c6fb8;
+}
+
+.esube-icon {
+  margin: 8px auto 16px;
+}
+
+.esube-btns {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.esube-btns button {
+  background: #ececec;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.esube-btns button.on,
+.esube-card.employer .esube-btns button:first-child.on {
+  background: #1c6fb8;
+  color: #fff;
+  border-color: #155a96;
+}
+
+.esube-link {
+  display: block;
+  width: min(240px, 100%);
+  margin: 6px auto;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.esube-login {
+  text-align: left;
+  max-width: 280px;
+  margin: 12px auto 0;
+  display: grid;
+  gap: 10px;
+}
+
+.esube-login input {
+  width: 100%;
+  margin-top: 4px;
+  border: 1px solid #c5c5c5;
+  padding: 7px 8px;
+}
+
+.esube-submit {
+  background: #1c6fb8;
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.esube-tiles {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin: 22px 0 16px;
+}
+
+.esube-tiles button {
+  color: #fff;
+  border: 0;
+  min-height: 72px;
+  border-radius: 4px;
+  padding: 10px 8px;
+  font-weight: 700;
+  cursor: default;
+}
+
+.esube-tiles button:nth-child(1) { background: #1d6fd8; }
+.esube-tiles button:nth-child(2) { background: #7cb342; }
+.esube-tiles button:nth-child(3) { background: #ef6c00; }
+.esube-tiles button:nth-child(4) { background: #8e24aa; }
+.esube-tiles button:nth-child(5) { background: #607d8b; }
+.esube-tiles button:nth-child(6) { background: #00838f; }
+
+.esube-hizmet {
+  display: block;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  padding: 8px 22px;
+}
+
+@media (max-width: 900px) {
+  .esube-cards,
+  .esube-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
 .iskur-modal {
   width: min(520px, calc(100% - 24px));
   background: #fff;

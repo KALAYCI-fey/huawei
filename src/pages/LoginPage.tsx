@@ -5,8 +5,8 @@ import { completeEmployerLogin, credentialsOk, isAuthenticated, useAppState } fr
 export function LoginPage() {
   const navigate = useNavigate()
   const { workplaces } = useAppState()
-  const [step, setStep] = useState<'kimlik' | 'firma'>('kimlik')
-  const [username, setUsername] = useState('isveren')
+  const [panel, setPanel] = useState<'kapali' | 'giris' | 'firma'>('kapali')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [firmaId, setFirmaId] = useState('')
   const [error, setError] = useState('')
@@ -18,12 +18,12 @@ export function LoginPage() {
   function onCredentials(event: FormEvent) {
     event.preventDefault()
     if (!credentialsOk(username, password)) {
-      setError('Kullanıcı adı veya şifre hatalı.')
+      setError('Kullanıcı adı veya şifre hatalı. Demo: isveren / demo123')
       return
     }
     setError('')
     setFirmaId('')
-    setStep('firma')
+    setPanel('firma')
   }
 
   function onFirmLogin(event: FormEvent) {
@@ -37,91 +37,183 @@ export function LoginPage() {
   }
 
   return (
-    <div className="login-page">
-      <div className="iskur-modal">
-        <div className="iskur-modal-title">
-          <h1>İşveren Giriş</h1>
-          <button type="button" className="iskur-x" aria-label="Kapat" onClick={() => setStep('kimlik')}>
-            ×
-          </button>
+    <div className="esube">
+      <header className="esube-top">
+        <div className="esube-brand">
+          <div className="esube-logo">İŞ</div>
+          <div>
+            <strong>İŞKUR</strong>
+            <small>TÜRKİYE İŞ KURUMU</small>
+          </div>
         </div>
+        <span>İŞKUR E-ŞUBE</span>
+      </header>
 
-        {step === 'kimlik' ? (
-          <form className="iskur-modal-body" onSubmit={onCredentials}>
-            <p className="login-hint">
-              Demo: <strong>isveren</strong> / <strong>demo123</strong>
-            </p>
-            <div className="iskur-row">
-              <label htmlFor="username">Kullanıcı</label>
-              <input
-                id="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                autoComplete="username"
-              />
+      <div className="esube-body">
+        <div className="esube-cards">
+          <section className="esube-card">
+            <h2>İş Arayan</h2>
+            <div className="esube-icon seeker" aria-hidden>
+              <svg viewBox="0 0 80 80" width="88" height="88">
+                <circle cx="40" cy="22" r="12" fill="#8aa4c0" />
+                <path d="M18 70c4-18 14-26 22-26s18 8 22 26" fill="#8aa4c0" />
+                <rect x="28" y="40" width="24" height="16" rx="2" fill="#1c6fb8" />
+              </svg>
             </div>
-            <div className="iskur-row">
-              <label htmlFor="password">Şifre</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
-              />
-            </div>
-            {error ? <p className="error light">{error}</p> : null}
-            <div className="iskur-actions">
-              <button className="iskur-btn" type="submit">
-                İleri
+            <div className="esube-btns">
+              <button type="button" disabled>
+                Giriş
+              </button>
+              <button type="button" disabled>
+                Üye Ol
               </button>
             </div>
-          </form>
-        ) : (
-          <form className="iskur-modal-body" onSubmit={onFirmLogin}>
-            <div className="iskur-row">
-              <label htmlFor="firma">Firma</label>
-              <select
-                id="firma"
-                value={firmaId}
-                onChange={(event) => {
-                  setFirmaId(event.target.value)
-                  setError('')
-                }}
-              >
-                <option value="">Lütfen Firma Seçiniz...</option>
-                {workplaces.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.unvan}
-                  </option>
-                ))}
-              </select>
+            <button className="esube-link" type="button" disabled>
+              Şifremi Unuttum
+            </button>
+            <button className="esube-link" type="button" disabled>
+              Danışmanım Kim?
+            </button>
+          </section>
+
+          <section className="esube-card employer">
+            <h2>İşveren</h2>
+            <div className="esube-icon" aria-hidden>
+              <svg viewBox="0 0 80 80" width="88" height="88">
+                <circle cx="40" cy="20" r="10" fill="#5b7c9a" />
+                <circle cx="22" cy="28" r="7" fill="#8aa4c0" />
+                <circle cx="58" cy="28" r="7" fill="#8aa4c0" />
+                <path d="M12 70c3-14 10-20 18-20h20c8 0 15 6 18 20" fill="#5b7c9a" />
+              </svg>
             </div>
-            {error ? <p className="error light">{error}</p> : null}
-            <div className="iskur-actions">
-              <button className="iskur-btn" type="submit">
-                İşveren Giriş
-              </button>
+            <div className="esube-btns">
               <button
-                className="iskur-btn"
                 type="button"
+                className={panel !== 'kapali' ? 'on' : ''}
                 onClick={() => {
-                  setFirmaId('')
+                  setPanel('giris')
                   setError('')
                 }}
               >
-                Temizle
+                Giriş
+              </button>
+              <button type="button" disabled>
+                Üye Ol
+              </button>
+              <button type="button" disabled>
+                Yeni İlan
+              </button>
+            </div>
+
+            {panel === 'giris' ? (
+              <form className="esube-login" onSubmit={onCredentials}>
+                <p className="muted">İşveren giriş bilgilerini bu alana girin. Demo: isveren / demo123</p>
+                <label>
+                  Kullanıcı
+                  <input
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    autoComplete="username"
+                  />
+                </label>
+                <label>
+                  Şifre
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    autoComplete="current-password"
+                  />
+                </label>
+                {error && panel === 'giris' ? <p className="error">{error}</p> : null}
+                <button className="esube-submit" type="submit">
+                  Giriş
+                </button>
+              </form>
+            ) : (
+              <>
+                <button className="esube-link" type="button" disabled>
+                  Bireysel İşveren Üye Ol
+                </button>
+                <button className="esube-link" type="button" disabled>
+                  Danışmanım Kim?
+                </button>
+                <button className="esube-link" type="button" disabled>
+                  İşveren olarak kayıtlı mıyım?
+                </button>
+              </>
+            )}
+          </section>
+        </div>
+
+        <div className="esube-tiles">
+          <button type="button">İş İlanları</button>
+          <button type="button">Mesleki Eğitim Kursları</button>
+          <button type="button" className="tile-iep">
+            İşbaşı Eğitim Programları
+          </button>
+          <button type="button">Toplum Yararına Programlar</button>
+          <button type="button">İşsizlik Ödeneği</button>
+          <button type="button">Staj Portalı</button>
+        </div>
+        <button className="esube-hizmet" type="button" disabled>
+          Hizmet Noktası Giriş
+        </button>
+      </div>
+
+      {panel === 'firma' ? (
+        <div className="modal-backdrop">
+          <form className="iskur-modal" onSubmit={onFirmLogin}>
+            <div className="iskur-modal-title">
+              <h1>İşveren Giriş</h1>
+              <button type="button" className="iskur-x" onClick={() => setPanel('giris')}>
+                ×
+              </button>
+            </div>
+            <div className="iskur-modal-body">
+              <div className="iskur-row">
+                <label htmlFor="firma">Firma</label>
+                <select
+                  id="firma"
+                  value={firmaId}
+                  onChange={(event) => {
+                    setFirmaId(event.target.value)
+                    setError('')
+                  }}
+                >
+                  <option value="">Lütfen Firma Seçiniz...</option>
+                  {workplaces.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.unvan}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {error ? <p className="error light">{error}</p> : null}
+              <div className="iskur-actions">
+                <button className="iskur-btn" type="submit">
+                  İşveren Giriş
+                </button>
+                <button
+                  className="iskur-btn"
+                  type="button"
+                  onClick={() => {
+                    setFirmaId('')
+                    setError('')
+                  }}
+                >
+                  Temizle
+                </button>
+              </div>
+            </div>
+            <div className="iskur-modal-foot">
+              <button className="iskur-kapat" type="button" onClick={() => setPanel('giris')}>
+                Kapat
               </button>
             </div>
           </form>
-        )}
-
-        <div className="iskur-modal-foot">
-          <button className="iskur-kapat" type="button" onClick={() => setStep('kimlik')}>
-            Kapat
-          </button>
         </div>
-      </div>
+      ) : null}
     </div>
   )
 }
