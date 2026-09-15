@@ -72,6 +72,7 @@ export function DocumentPanel({
   onNext: () => void
 }) {
   const [error, setError] = useState('')
+  const [preview, setPreview] = useState<UploadedDoc | null>(null)
 
   async function handleFile(tur: DocumentKind, file: File | undefined) {
     if (!file) return
@@ -128,9 +129,13 @@ export function DocumentPanel({
                   <td className="doc-info">{row.bilgi}</td>
                   <td>
                     {uploaded?.dataUrl ? (
-                      <a className="btn-doc" href={uploaded.dataUrl} download={uploaded.fileName}>
+                      <button
+                        className="btn-doc"
+                        type="button"
+                        onClick={() => setPreview(uploaded)}
+                      >
                         Belge Göster
-                      </a>
+                      </button>
                     ) : (
                       <button className="btn-doc" type="button" disabled>
                         Belge Göster
@@ -192,8 +197,51 @@ export function DocumentPanel({
           Sonraki sekme
         </button>
       </div>
+      {preview ? <DocumentPreview doc={preview} onClose={() => setPreview(null)} /> : null}
     </div>
   )
+}
+
+function DocumentPreview({
+  doc,
+  onClose,
+}: {
+  doc: UploadedDoc
+  onClose: () => void
+}) {
+  const kind = previewKind(doc)
+  return (
+    <div className="preview-backdrop" onClick={onClose}>
+      <div className="preview-modal" onClick={(event) => event.stopPropagation()}>
+        <div className="preview-head">
+          <strong>Önizleme — {doc.fileName}</strong>
+          <button className="btn btn-ghost" type="button" onClick={onClose}>
+            Kapat
+          </button>
+        </div>
+        <div className="preview-body">
+          {kind === 'image' ? <img src={doc.dataUrl} alt={doc.fileName} /> : null}
+          {kind === 'pdf' ? (
+            <iframe title={doc.fileName} src={doc.dataUrl} />
+          ) : null}
+          {kind === 'other' ? (
+            <p className="muted">
+              Bu dosya türü tarayıcıda görsel olarak açılamıyor. İndirmeden yalnızca yüklenmiş olduğunu
+              kontrol edebilirsiniz.
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function previewKind(doc: UploadedDoc) {
+  const name = doc.fileName.toLowerCase()
+  const type = doc.fileType
+  if (type.startsWith('image/') || /\.(jpe?g|png|gif|webp|tiff?)$/.test(name)) return 'image'
+  if (type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf'
+  return 'other'
 }
 
 function guessType(name: string) {

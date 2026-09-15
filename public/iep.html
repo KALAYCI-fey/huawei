@@ -46,6 +46,12 @@
     .btn-sablon { background:none; border:0; color:#1d6fd8; font-weight:700; cursor:pointer; text-decoration:none; }
     .file-btn { position:relative; overflow:hidden; display:inline-block; }
     .file-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .preview-backdrop { position:fixed; inset:0; background:rgba(11,39,72,.55); display:none; place-items:center; padding:16px; z-index:30; }
+    .preview-backdrop.on { display:grid; }
+    .preview-modal { width:min(960px,100%); height:min(88vh,900px); background:#fff; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
+    .preview-head { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #d7e0ea; }
+    .preview-body { flex:1; min-height:0; padding:12px; background:#f3f6fa; }
+    .preview-body img, .preview-body iframe { width:100%; height:100%; border:0; background:#fff; object-fit:contain; }
     .days { display:flex; flex-wrap:wrap; gap:8px; font-size:11px; }
     @media (max-width:1100px) { .shell, .sheet, .iep-row { grid-template-columns:1fr; } .info { margin-left:0; } }
   </style>
@@ -159,49 +165,59 @@
             <tr>
               <td>1</td><td>Talep Dilekçesi</td>
               <td>İlgili şablon dosyasını indirip ilgili alanları doldurduktan ve imzaladıktan sonra belgeyi sisteme yüklemeniz gerekmektedir.</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> <a class="btn-sablon" href="/sablonlar/talep-dilekcesi.docx" download="Talep_Dilekcesi.docx">Şablon indir</a></td>
             </tr>
             <tr>
               <td>2</td><td>İşveren Belgesi</td>
               <td>İşveren türüne göre; ticaret sicil gazetesi, vakıf senedi, dernek tüzüğü veya oda kaydı belgelerinin yüklenmesi gerekmektedir.</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>3</td><td>İmza Yetki Belgesi</td>
               <td>İşverenin veya onun yerine yetkili kişinin imzaya yetkili olduğuna dair belgenin yüklenmesi gerekmektedir.</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>4</td><td>Ortaklık Belgesi</td>
               <td>Ortaklık Belgesi</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>5</td><td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
               <td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>6</td><td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
               <td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>7</td><td>Diğer Belgeler</td>
               <td>Katılımcıya ilişkin belgeler, işyeri statüsünü gösterir belgeler, vb.</td>
-              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
               <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
           </tbody>
         </table>
       </section>
     </main>
+  </div>
+
+  <div id="preview" class="preview-backdrop">
+    <div class="preview-modal">
+      <div class="preview-head">
+        <strong id="preview-title">Önizleme</strong>
+        <button class="btn-w" type="button" id="preview-close">Kapat</button>
+      </div>
+      <div class="preview-body" id="preview-body"></div>
+    </div>
   </div>
 
   <script>
@@ -250,18 +266,47 @@
         const file = input.files && input.files[0]
         if (!file) return
         const row = input.closest('tr')
-        const url = URL.createObjectURL(file)
-        const show = row.querySelector('.show-doc')
-        show.href = url
-        show.download = file.name
+        row._previewUrl = URL.createObjectURL(file)
+        row._previewName = file.name
+        row._previewType = file.type
         row.querySelector('.durum').textContent = 'Yüklendi — ' + file.name
       }
     })
+    document.querySelectorAll('.show-doc').forEach((btn) => {
+      btn.onclick = () => {
+        const row = btn.closest('tr')
+        if (!row._previewUrl) return
+        const name = row._previewName || 'Belge'
+        const type = row._previewType || ''
+        document.getElementById('preview-title').textContent = 'Önizleme — ' + name
+        const body = document.getElementById('preview-body')
+        body.innerHTML = ''
+        if (type.startsWith('image/') || /\.(jpe?g|png|gif|webp|tiff?)$/i.test(name)) {
+          const img = document.createElement('img')
+          img.src = row._previewUrl
+          img.alt = name
+          body.appendChild(img)
+        } else if (type === 'application/pdf' || /\.pdf$/i.test(name)) {
+          const frame = document.createElement('iframe')
+          frame.src = row._previewUrl
+          frame.title = name
+          body.appendChild(frame)
+        } else {
+          body.innerHTML = '<p>Bu dosya türü tarayıcıda görsel olarak açılamıyor.</p>'
+        }
+        document.getElementById('preview').classList.add('on')
+      }
+    })
+    document.getElementById('preview-close').onclick = () => {
+      document.getElementById('preview').classList.remove('on')
+    }
+    document.getElementById('preview').onclick = (event) => {
+      if (event.target.id === 'preview') document.getElementById('preview').classList.remove('on')
+    }
     document.querySelectorAll('.btn-sil').forEach((btn) => {
       btn.onclick = () => {
         const row = btn.closest('tr')
-        const show = row.querySelector('.show-doc')
-        show.href = '#'
+        row._previewUrl = ''
         row.querySelector('.durum').textContent = 'Yeni'
         const fileInput = row.querySelector('input[type=file]')
         if (fileInput) fileInput.value = ''
