@@ -164,9 +164,6 @@ export function IepBilgilerForm({
             />
           </div>
         </Field>
-        <Field label="İstihdam Yükümlülüğü Süresi:">
-          <input className="readonly" readOnly value={draft.istihdamYukumluluguSuresi} />
-        </Field>
         <Field label="Geleceğin Mesleği Kapsamında:" green>
           <YesNoToggle
             value={draft.geleceginMeslegi}
