@@ -43,7 +43,9 @@
     .doc-table td { padding:10px 8px; vertical-align:middle; }
     .btn-doc { background:#1d6fd8; color:#fff; border:0; padding:6px 10px; font-weight:700; cursor:pointer; }
     .btn-sil { background:#e6b325; border:0; padding:6px 10px; font-weight:700; cursor:pointer; }
-    .btn-sablon { background:none; border:0; color:#1d6fd8; font-weight:700; cursor:pointer; }
+    .btn-sablon { background:none; border:0; color:#1d6fd8; font-weight:700; cursor:pointer; text-decoration:none; }
+    .file-btn { position:relative; overflow:hidden; display:inline-block; }
+    .file-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
     .days { display:flex; flex-wrap:wrap; gap:8px; font-size:11px; }
     @media (max-width:1100px) { .shell, .sheet, .iep-row { grid-template-columns:1fr; } .info { margin-left:0; } }
   </style>
@@ -157,44 +159,44 @@
             <tr>
               <td>1</td><td>Talep Dilekçesi</td>
               <td>İlgili şablon dosyasını indirip ilgili alanları doldurduktan ve imzaladıktan sonra belgeyi sisteme yüklemeniz gerekmektedir.</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> <a class="btn-sablon" href="/sablonlar/talep-dilekcesi.docx" download="Talep_Dilekcesi.docx">Şablon indir</a></td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> <a class="btn-sablon" href="/sablonlar/talep-dilekcesi.docx" download="Talep_Dilekcesi.docx">Şablon indir</a></td>
             </tr>
             <tr>
               <td>2</td><td>İşveren Belgesi</td>
               <td>İşveren türüne göre; ticaret sicil gazetesi, vakıf senedi, dernek tüzüğü veya oda kaydı belgelerinin yüklenmesi gerekmektedir.</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>3</td><td>İmza Yetki Belgesi</td>
               <td>İşverenin veya onun yerine yetkili kişinin imzaya yetkili olduğuna dair belgenin yüklenmesi gerekmektedir.</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>4</td><td>Ortaklık Belgesi</td>
               <td>Ortaklık Belgesi</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>5</td><td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
               <td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>6</td><td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
               <td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
             <tr>
               <td>7</td><td>Diğer Belgeler</td>
               <td>Katılımcıya ilişkin belgeler, işyeri statüsünü gösterir belgeler, vb.</td>
-              <td><button class="btn-doc" type="button">Belge Göster</button></td><td>Yeni</td>
-              <td><button class="btn-doc" type="button">Belge Yükle</button> <button class="btn-sil" type="button">Sil</button> --</td>
+              <td><a class="btn-doc show-doc" href="#" download>Belge Göster</a></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
             </tr>
           </tbody>
         </table>
@@ -241,6 +243,28 @@
         const yes = btn.classList.contains('yes')
         btn.classList.toggle('yes', !yes)
         btn.classList.toggle('no', yes)
+      }
+    })
+    document.querySelectorAll('.file-btn input').forEach((input) => {
+      input.onchange = () => {
+        const file = input.files && input.files[0]
+        if (!file) return
+        const row = input.closest('tr')
+        const url = URL.createObjectURL(file)
+        const show = row.querySelector('.show-doc')
+        show.href = url
+        show.download = file.name
+        row.querySelector('.durum').textContent = 'Yüklendi — ' + file.name
+      }
+    })
+    document.querySelectorAll('.btn-sil').forEach((btn) => {
+      btn.onclick = () => {
+        const row = btn.closest('tr')
+        const show = row.querySelector('.show-doc')
+        show.href = '#'
+        row.querySelector('.durum').textContent = 'Yeni'
+        const fileInput = row.querySelector('input[type=file]')
+        if (fileInput) fileInput.value = ''
       }
     })
   </script>

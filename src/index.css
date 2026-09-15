@@ -796,6 +796,19 @@ tbody tr {
   align-items: center;
 }
 
+.file-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-btn input[type='file'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
+}
+
 .btn-doc,
 .btn-sil,
 .btn-sablon {

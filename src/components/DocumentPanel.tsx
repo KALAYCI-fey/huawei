@@ -1,7 +1,11 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import type { DocumentKind, Program, UploadedDoc } from '../types'
 
-const ALLOWED = ['application/pdf', 'image/jpeg', 'image/tiff', 'image/tif']
+const ACCEPT = '.pdf,.jpg,.jpeg,.png,.tif,.tiff,.doc,.docx,application/pdf,image/jpeg,image/png,image/tiff,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+function isAllowed(file: File) {
+  return /\.(pdf|jpe?g|png|tiff?|docx?)$/i.test(file.name)
+}
 
 const DOCUMENT_ROWS: {
   no: number
@@ -68,31 +72,38 @@ export function DocumentPanel({
   onNext: () => void
 }) {
   const [error, setError] = useState('')
-  const inputs = useRef<Record<string, HTMLInputElement | null>>({})
 
   async function handleFile(tur: DocumentKind, file: File | undefined) {
     if (!file) return
-    const type = file.type || guessType(file.name)
-    if (!ALLOWED.includes(type) && !/\.(pdf|jpe?g|tiff?)$/i.test(file.name)) {
-      setError('Yalnızca PDF, JPEG veya TIFF yüklenebilir.')
+    if (!isAllowed(file)) {
+      setError('PDF, Word (doc/docx), JPEG, PNG veya TIFF yükleyin.')
       return
     }
-    const dataUrl = await readFile(file)
-    const doc: UploadedDoc = {
-      tur,
-      fileName: file.name,
-      fileType: type || file.type,
-      dataUrl,
-      uploadedAt: new Date().toISOString(),
+    if (file.size > 8 * 1024 * 1024) {
+      setError('Dosya 8 MB sınırını aşıyor.')
+      return
     }
-    onChange([...program.belgeler.filter((item) => item.tur !== tur), doc])
-    setError('')
+    try {
+      const dataUrl = await readFile(file)
+      const doc: UploadedDoc = {
+        tur,
+        fileName: file.name,
+        fileType: file.type || guessType(file.name),
+        dataUrl,
+        uploadedAt: new Date().toISOString(),
+      }
+      onChange([...program.belgeler.filter((item) => item.tur !== tur), doc])
+      setError('')
+    } catch {
+      setError('Dosya okunamadı. Tekrar deneyin.')
+    }
   }
 
   return (
     <div>
       <p className="notice">
-        Belgeler PDF, JPEG veya TIFF olmalıdır. Şablon doldurulup imzalandıktan sonra yüklenir.
+        PDF, Word, JPEG, PNG veya TIFF yükleyebilirsiniz. Talep dilekçesi şablonunu indirip doldurduktan sonra
+        buradan tekrar yükleyin.
       </p>
       {error ? <p className="error">{error}</p> : null}
       <div className="table-wrap">
@@ -116,8 +127,8 @@ export function DocumentPanel({
                   <td>{row.ad}</td>
                   <td className="doc-info">{row.bilgi}</td>
                   <td>
-                    {uploaded ? (
-                      <a className="btn-doc" href={uploaded.dataUrl} target="_blank" rel="noreferrer">
+                    {uploaded?.dataUrl ? (
+                      <a className="btn-doc" href={uploaded.dataUrl} download={uploaded.fileName}>
                         Belge Göster
                       </a>
                     ) : (
@@ -126,28 +137,29 @@ export function DocumentPanel({
                       </button>
                     )}
                   </td>
-                  <td>{uploaded ? 'Yüklendi' : 'Yeni'}</td>
+                  <td>
+                    {uploaded ? (
+                      <>
+                        Yüklendi
+                        <div className="muted">{uploaded.fileName}</div>
+                      </>
+                    ) : (
+                      'Yeni'
+                    )}
+                  </td>
                   <td>
                     <div className="doc-actions">
-                      <input
-                        ref={(node) => {
-                          inputs.current[row.tur] = node
-                        }}
-                        type="file"
-                        hidden
-                        accept=".pdf,.jpg,.jpeg,.tif,.tiff,application/pdf,image/jpeg,image/tiff"
-                        onChange={(event) => {
-                          void handleFile(row.tur, event.target.files?.[0])
-                          event.target.value = ''
-                        }}
-                      />
-                      <button
-                        className="btn-doc"
-                        type="button"
-                        onClick={() => inputs.current[row.tur]?.click()}
-                      >
+                      <label className="btn-doc file-btn">
                         Belge Yükle
-                      </button>
+                        <input
+                          type="file"
+                          accept={ACCEPT}
+                          onChange={(event) => {
+                            void handleFile(row.tur, event.target.files?.[0])
+                            event.target.value = ''
+                          }}
+                        />
+                      </label>
                       <button
                         className="btn-sil"
                         type="button"
@@ -185,9 +197,15 @@ export function DocumentPanel({
 }
 
 function guessType(name: string) {
-  if (name.toLowerCase().endsWith('.pdf')) return 'application/pdf'
-  if (/\.jpe?g$/i.test(name)) return 'image/jpeg'
-  if (/\.tiff?$/i.test(name)) return 'image/tiff'
+  const lower = name.toLowerCase()
+  if (lower.endsWith('.pdf')) return 'application/pdf'
+  if (/\.jpe?g$/.test(lower)) return 'image/jpeg'
+  if (lower.endsWith('.png')) return 'image/png'
+  if (/\.tiff?$/.test(lower)) return 'image/tiff'
+  if (lower.endsWith('.docx')) {
+    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  }
+  if (lower.endsWith('.doc')) return 'application/msword'
   return ''
 }
 

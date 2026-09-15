@@ -44,7 +44,19 @@ let state: AppState = loadState()
 const listeners = new Set<() => void>()
 
 function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  try {
+    const copy = structuredClone(state)
+    copy.programs = copy.programs.map((program) => ({
+      ...program,
+      belgeler: program.belgeler.map((doc) => ({
+        ...doc,
+        dataUrl: doc.dataUrl && doc.dataUrl.length > 200_000 ? '' : doc.dataUrl,
+      })),
+    }))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(copy))
+  } catch {
+    /* quota or private mode — keep in-memory state */
+  }
   for (const listener of listeners) listener()
 }
 
