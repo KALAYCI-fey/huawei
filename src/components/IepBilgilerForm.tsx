@@ -176,10 +176,46 @@ export function IepBilgilerForm({
             />
           </div>
         </Field>
-        <Field label="Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?">
-          <YesNoButtons
+        <Field label="Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?:" green>
+          <YesNoToggle
             value={draft.ayniMeslekteSigortali}
             onChange={(value) => setDraft({ ...draft, ayniMeslekteSigortali: value })}
+          />
+        </Field>
+        <Field label="İstihdam Taahhüt Oranı:" green>
+          <div className="oran-row">
+            <span>%</span>
+            <input
+              className="green"
+              type="number"
+              min={0}
+              max={100}
+              value={draft.istihdamTaahhutOran}
+              onChange={(event) =>
+                setDraft({ ...draft, istihdamTaahhutOran: Number(event.target.value) })
+              }
+            />
+          </div>
+        </Field>
+        <Field label="İstihdam Yükümlülüğü Süresi:">
+          <input className="readonly" readOnly value={draft.istihdamYukumluluguSuresi} />
+        </Field>
+        <Field label="Geleceğin Mesleği Kapsamında:" green>
+          <YesNoToggle
+            value={draft.geleceginMeslegi}
+            onChange={(value) => setDraft({ ...draft, geleceginMeslegi: value })}
+          />
+        </Field>
+        <Field label="İmalat Bilişim Kapsamında:" green>
+          <YesNoToggle
+            value={draft.imalatBilisim}
+            onChange={(value) => setDraft({ ...draft, imalatBilisim: value })}
+          />
+        </Field>
+        <Field label="Tehlikeli Meslek:" green>
+          <YesNoToggle
+            value={draft.tehlikeliMeslek}
+            onChange={(value) => setDraft({ ...draft, tehlikeliMeslek: value })}
           />
         </Field>
       </div>
@@ -291,22 +327,24 @@ function Field({
   )
 }
 
-function YesNoButtons({
+function YesNoToggle({
   value,
   onChange,
 }: {
   value: YesNo
   onChange: (value: YesNo) => void
 }) {
+  const isYes = value === 'evet'
   return (
-    <div className="iep-yesno">
-      <button type="button" className={value === 'evet' ? 'on' : ''} onClick={() => onChange('evet')}>
-        EVET
-      </button>
-      <button type="button" className={value === 'hayir' ? 'on' : ''} onClick={() => onChange('hayir')}>
-        HAYIR
-      </button>
-    </div>
+    <button
+      type="button"
+      className={`yn-switch ${isYes ? 'yes' : 'no'}`}
+      aria-pressed={isYes}
+      onClick={() => onChange(isYes ? 'hayir' : 'evet')}
+    >
+      <span className="yn-evet">EVET</span>
+      <span className="yn-hayir">HAYIR</span>
+    </button>
   )
 }
 

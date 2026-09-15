@@ -569,25 +569,49 @@ select.green {
   margin: 8px 0 12px 200px;
 }
 
-.iep-yesno {
+.oran-row {
   display: flex;
+  align-items: center;
   gap: 8px;
+  max-width: 160px;
 }
 
-.iep-yesno button {
-  border: 1px solid #8aa4c7;
-  background: #eef3f8;
-  color: #1d4f8a;
-  padding: 5px 14px;
-  border-radius: 3px;
-  cursor: pointer;
+.oran-row span {
   font-weight: 700;
 }
 
-.iep-yesno button.on {
-  background: #3b82f6;
-  color: #fff;
-  border-color: #2563eb;
+.yn-switch {
+  width: 148px;
+  height: 28px;
+  border: 1px solid #3bbf2a;
+  background: #7cff57;
+  border-radius: 3px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.yn-switch span {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.yn-switch.yes .yn-evet,
+.yn-switch.no .yn-hayir {
+  background: #fff;
+  color: #111;
+}
+
+.yn-switch.yes .yn-hayir,
+.yn-switch.no .yn-evet {
+  background: transparent;
+  color: transparent;
 }
 
 .btn-tatil {

@@ -91,9 +91,12 @@ export interface Program {
   kontenjanSayisi: number
   kontenjanKullanilan: number
   ayniMeslekteSigortali: YesNo
+  geleceginMeslegi: YesNo
   imalatBilisim: YesNo
   tehlikeliMeslek: YesNo
   programIlani: YesNo
+  istihdamTaahhutOran: number
+  istihdamYukumluluguSuresi: number
   erkekKursiyer: number
   kadinKursiyer: number
   calisanSayisi: number

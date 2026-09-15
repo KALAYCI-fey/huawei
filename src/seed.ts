@@ -16,6 +16,9 @@ function extraIep(ilce: string) {
     iepKesSayisi: 92,
     kontenjanSayisi: 28,
     kontenjanKullanilan: 8,
+    geleceginMeslegi: 'hayir' as const,
+    istihdamTaahhutOran: 60,
+    istihdamYukumluluguSuresi: 150,
   }
 }
 

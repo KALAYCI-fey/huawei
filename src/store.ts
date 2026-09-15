@@ -9,7 +9,7 @@ import type {
   Trainee,
 } from './types'
 
-const STORAGE_KEY = 'iskur-isbasi-state-v3'
+const STORAGE_KEY = 'iskur-isbasi-state-v4'
 const AUTH_KEY = 'iskur-isbasi-auth'
 const FIRMA_KEY = 'iskur-isbasi-firma'
 
