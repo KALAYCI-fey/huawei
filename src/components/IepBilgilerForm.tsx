@@ -14,8 +14,6 @@ export function IepBilgilerForm({
   fiiliGun: number
 }) {
   const [meslekQuery, setMeslekQuery] = useState(draft.meslek)
-  const [holidayOpen, setHolidayOpen] = useState(false)
-  const [holiday, setHoliday] = useState('')
   const ilceler = ILCELER[draft.uygulamaIl] ?? []
   const meslekler = useMemo(() => {
     const q = meslekQuery.trim().toLowerCase()
@@ -222,48 +220,6 @@ export function IepBilgilerForm({
             onChange={(event) => setDraft(withDates(draft, { bitis: event.target.value }))}
           />
         </Field>
-        <Field label="Tatil Günleri:">
-          <button className="btn-tatil" type="button" onClick={() => setHolidayOpen((open) => !open)}>
-            Tatil Günlerini Seç
-          </button>
-        </Field>
-        {holidayOpen ? (
-          <div className="holiday-box">
-            <div className="iep-pair">
-              <input type="date" value={holiday} onChange={(event) => setHoliday(event.target.value)} />
-              <button
-                className="btn btn-ghost"
-                type="button"
-                onClick={() => {
-                  if (!holiday || draft.tatilGunleri.includes(holiday)) return
-                  setDraft({ ...draft, tatilGunleri: [...draft.tatilGunleri, holiday].sort() })
-                  setHoliday('')
-                }}
-              >
-                Ekle
-              </button>
-            </div>
-            <ul>
-              {draft.tatilGunleri.map((day) => (
-                <li key={day}>
-                  {toTr(day)}{' '}
-                  <button
-                    type="button"
-                    className="linkish"
-                    onClick={() =>
-                      setDraft({
-                        ...draft,
-                        tatilGunleri: draft.tatilGunleri.filter((item) => item !== day),
-                      })
-                    }
-                  >
-                    kaldır
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
         <WeekRow label="İlk Hafta :" value={draft.ilkHafta} onChange={(ilkHafta) => setDraft({ ...draft, ilkHafta })} />
         <WeekRow
           label="Devam Eden Haftalar :"
@@ -363,13 +319,6 @@ function WeekRow({
       </div>
     </div>
   )
-}
-
-function toTr(value: string) {
-  if (!value) return ''
-  const [y, m, d] = value.split('-')
-  if (!d) return value
-  return `${d}.${m}.${y}`
 }
 
 function withDates(draft: Program, patch: Partial<Program>): Program {
