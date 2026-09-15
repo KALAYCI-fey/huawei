@@ -3,7 +3,7 @@ import { logout, useAppState } from '../store'
 
 const links = [
   { to: '/', label: 'Özet' },
-  { to: '/programlar', label: 'Programlar' },
+  { to: '/programlar', label: 'İEP başvuru' },
   { to: '/kursiyerler', label: 'Kursiyerler' },
   { to: '/isbasi', label: 'İşbaşı' },
   { to: '/yoklama', label: 'Yoklama' },

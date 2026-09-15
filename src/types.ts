@@ -34,10 +34,37 @@ export interface Employer {
   eposta: string
 }
 
+export type YesNo = 'evet' | 'hayir' | ''
+
+export interface Workplace {
+  id: string
+  unvan: string
+  sgkSicilNo: string
+  il: string
+  ilce: string
+  adres: string
+}
+
+export interface UploadedDoc {
+  tur: DocumentKind
+  fileName: string
+  fileType: string
+  dataUrl: string
+  uploadedAt: string
+}
+
+export type DocumentKind =
+  | 'talep_dilekcesi'
+  | 'isveren_belgesi'
+  | 'imza_yetki'
+  | 'ortaklik'
+
 export interface Program {
   id: string
+  firmaId: string
   ad: string
   iskurDosyaNo: string
+  kursNo: string
   meslek: string
   meslekKodu: string
   kontenjan: number
@@ -47,6 +74,22 @@ export interface Program {
   toplamGun: number
   status: ProgramStatus
   aciklama: string
+  kontenjanIl: string
+  kontenjanIlce: string
+  uygulamaIl: string
+  uygulamaAdres: string
+  ayniMeslekteSigortali: YesNo
+  imalatBilisim: YesNo
+  tehlikeliMeslek: YesNo
+  programIlani: YesNo
+  erkekKursiyer: number
+  kadinKursiyer: number
+  calisanSayisi: number
+  kalanKontenjan: number
+  ilkHafta: boolean[]
+  devamHafta: boolean[]
+  sonHafta: boolean[]
+  belgeler: UploadedDoc[]
 }
 
 export interface Trainee {
@@ -91,6 +134,7 @@ export interface AttendanceRecord {
 
 export interface AppState {
   employer: Employer
+  workplaces: Workplace[]
   programs: Program[]
   trainees: Trainee[]
   jobStarts: JobStart[]

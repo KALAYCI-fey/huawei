@@ -9,7 +9,7 @@ import type {
   Trainee,
 } from './types'
 
-const STORAGE_KEY = 'iskur-isbasi-state-v1'
+const STORAGE_KEY = 'iskur-isbasi-state-v2'
 const AUTH_KEY = 'iskur-isbasi-auth'
 
 function loadState(): AppState {
@@ -20,7 +20,19 @@ function loadState(): AppState {
     if (!parsed.employer || !Array.isArray(parsed.programs)) {
       return structuredClone(seedState)
     }
-    return parsed
+    return {
+      ...structuredClone(seedState),
+      ...parsed,
+      workplaces: parsed.workplaces?.length ? parsed.workplaces : structuredClone(seedState.workplaces),
+      programs: parsed.programs.map((item) => ({
+        ...structuredClone(seedState.programs[0]),
+        ...item,
+        belgeler: item.belgeler ?? [],
+        ilkHafta: item.ilkHafta ?? [true, true, true, true, true, false, false],
+        devamHafta: item.devamHafta ?? [true, true, true, true, true, false, false],
+        sonHafta: item.sonHafta ?? [true, true, true, true, true, false, false],
+      })),
+    }
   } catch {
     return structuredClone(seedState)
   }

@@ -398,8 +398,87 @@ label span {
 
 .split {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 0.85fr 1.15fr;
   gap: 16px;
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tabs button {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px 8px 0 0;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+input.green,
+textarea.green,
+select.green {
+  background: #e7f7ee;
+  border-color: #8ec9a6;
+}
+
+input.readonly,
+select.readonly {
+  background: #e8edf3;
+  color: #4b5563;
+}
+
+.yesno {
+  border: 1px solid #8ec9a6;
+  background: #e7f7ee;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.yesno legend {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+.yesno label {
+  display: inline-flex;
+  gap: 6px;
+  margin-right: 16px;
+  align-items: center;
+}
+
+.week-row span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.week-days {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.row-selected {
+  background: #e8f2fb;
+}
+
+tr.row-selected td {
+  cursor: pointer;
+}
+
+tbody tr {
+  cursor: pointer;
 }
 
 .checklist li {
