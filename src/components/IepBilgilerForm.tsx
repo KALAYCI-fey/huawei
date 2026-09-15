@@ -34,21 +34,6 @@ export function IepBilgilerForm({
   return (
     <div className="iep-sheet">
       <div>
-        <Field label="Başvuru Numarası:">
-          <input className="readonly" readOnly value={draft.iskurDosyaNo} />
-        </Field>
-        <Field label="Kurs Numarası:">
-          <input className="readonly" readOnly value={draft.kursNo} />
-        </Field>
-        <Field label="Başvuru Durum:">
-          <input className="readonly" readOnly value={statusText(draft.status)} />
-        </Field>
-        <Field label="Kurs Durum:">
-          <input className="readonly" readOnly value={draft.kursDurum} />
-        </Field>
-        <Field label="Başvuru Tarih:">
-          <input className="readonly" readOnly value={toTr(draft.basvuruTarih)} />
-        </Field>
         <Field label="Kontenjan İl:" green>
           <select
             className="green"
@@ -378,18 +363,6 @@ function WeekRow({
       </div>
     </div>
   )
-}
-
-function statusText(status: Program['status']) {
-  const map = {
-    taslak: 'YENİ',
-    basvuru: 'GÖNDERİLDİ',
-    onaylandi: 'KABUL EDİLDİ',
-    devam: 'BAŞLADI',
-    tamamlandi: 'TAMAMLANDI',
-    iptal: 'REDDEDİLDİ',
-  }
-  return map[status]
 }
 
 function toTr(value: string) {
