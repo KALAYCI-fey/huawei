@@ -1,0 +1,17 @@
+{
+  "name": "İŞKUR İşbaşı Modülü",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "vite",
+      "command": "npm run dev",
+      "description": "Vite dev server for the İŞKUR İşbaşı web app, served on http://localhost:5173"
+    }
+  ],
+  "ports": [
+    {
+      "name": "vite dev server",
+      "port": 5173
+    }
+  ]
+}

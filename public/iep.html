@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İŞKUR İşbaşı — İEP Başvuru</title>
+  <style>
+    :root { --navy:#0b2748; --blue:#1c6fb8; --green:#7cff57; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:14px/1.4 "Segoe UI",sans-serif; color:#1c2430; background:#f3f6fa; }
+    .hidden { display:none !important; }
+    .login-page { min-height:100vh; display:grid; place-items:center; background:linear-gradient(180deg,#0b2748,#12345f); }
+    .modal { width:min(520px,calc(100% - 24px)); background:#fff; box-shadow:0 16px 40px rgba(0,0,0,.35); }
+    .modal-title { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #d9d9d9; }
+    .modal-title h1 { margin:0; font-size:22px; }
+    .x { border:0; background:none; font-size:28px; cursor:pointer; }
+    .modal-body { background:linear-gradient(180deg,#1a5f9e,#154f86); padding:28px 32px; color:#fff; }
+    .row { display:grid; grid-template-columns:80px 1fr; gap:12px; align-items:center; margin-bottom:16px; }
+    .row label { text-align:right; }
+    .row input, .row select { width:100%; padding:6px 8px; border:1px solid #c5c5c5; }
+    .actions { display:flex; justify-content:center; gap:10px; }
+    .btn-w { background:#f3f3f3; border:1px solid #d0d0d0; border-radius:4px; padding:7px 16px; font-weight:600; cursor:pointer; }
+    .modal-foot { display:flex; justify-content:flex-end; padding:10px 12px; background:#f7f7f7; }
+    .shell { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+    .side { background:linear-gradient(180deg,#0b2748,#12345f); color:#fff; padding:20px 14px; }
+    .nav a { display:block; color:#d7e6f5; text-decoration:none; padding:10px 12px; border-radius:8px; }
+    .nav a.active, .nav a:hover { background:rgba(255,255,255,.12); color:#fff; }
+    .page { padding:24px; }
+    .tabs button { border:1px solid #d7e0ea; background:#fff; padding:8px 12px; cursor:pointer; }
+    .tabs button.active { background:var(--navy); color:#fff; }
+    .sheet { display:grid; grid-template-columns:1fr 1fr; gap:28px 40px; margin-top:16px; }
+    .iep-row { display:grid; grid-template-columns:200px 1fr; gap:8px; margin-bottom:8px; }
+    .iep-row > span { text-align:right; padding-top:6px; }
+    .iep-row input, .iep-row select, .iep-row textarea { width:100%; padding:5px 8px; border:1px solid #c5c5c5; }
+    .yn { width:148px; height:28px; border:1px solid #c5c5c5; background:#e8edf3; display:grid; grid-template-columns:1fr 1fr; cursor:pointer; padding:0; font-weight:700; font-size:12px; }
+    .yn.yes { background:#7cff57; border-color:#3bbf2a; }
+    .yn span { display:grid; place-items:center; }
+    .yn.yes .e, .yn.no .h { background:#fff; color:#111; }
+    .yn.yes .h, .yn.no .e { color:transparent; }
+    .tatil { background:#1d6fd8; color:#fff; border:0; padding:7px 12px; font-weight:700; cursor:pointer; }
+    .doc-table { width:100%; border-collapse:collapse; background:#eaf4fb; font-size:13px; margin-top:12px; }
+    .doc-table th { background:#d7ebf7; color:#1d4f8a; text-align:left; padding:10px 8px; }
+    .doc-table td { padding:10px 8px; vertical-align:middle; }
+    .btn-doc { background:#1d6fd8; color:#fff; border:0; padding:6px 10px; font-weight:700; cursor:pointer; }
+    .btn-sil { background:#e6b325; border:0; padding:6px 10px; font-weight:700; cursor:pointer; }
+    .btn-sablon { background:none; border:0; color:#1d6fd8; font-weight:700; cursor:pointer; text-decoration:none; }
+    .file-btn { position:relative; overflow:hidden; display:inline-block; }
+    .file-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .preview-backdrop { position:fixed; inset:0; background:rgba(11,39,72,.55); display:none; place-items:center; padding:16px; z-index:30; }
+    .preview-backdrop.on { display:grid; }
+    .preview-modal { width:min(960px,100%); height:min(88vh,900px); background:#fff; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; }
+    .preview-head { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid #d7e0ea; }
+    .preview-body { flex:1; min-height:0; padding:12px; background:#f3f6fa; }
+    .preview-body img, .preview-body iframe { width:100%; height:100%; border:0; background:#fff; object-fit:contain; }
+    .days { display:flex; flex-wrap:wrap; gap:8px; font-size:11px; }
+    @media (max-width:1100px) { .shell, .sheet, .iep-row { grid-template-columns:1fr; } .info { margin-left:0; } }
+  </style>
+</head>
+<body>
+  <div id="login" class="login-page">
+    <div class="modal">
+      <div class="modal-title"><h1>İşveren Giriş</h1><button class="x" type="button">×</button></div>
+      <form id="step1" class="modal-body">
+        <div class="row"><label>Kullanıcı</label><input id="user" value="isveren" /></div>
+        <div class="row"><label>Şifre</label><input id="pass" type="password" /></div>
+        <p id="err1" style="color:#ffd7d7;text-align:center"></p>
+        <div class="actions"><button class="btn-w" type="submit">İleri</button></div>
+      </form>
+      <form id="step2" class="modal-body hidden">
+        <div class="row">
+          <label>Firma</label>
+          <select id="firma">
+            <option value="">Lütfen Firma Seçiniz...</option>
+            <option>Örnek Üretim A.Ş. — Pendik Atölye</option>
+            <option>Örnek Üretim A.Ş. — Tuzla Depo</option>
+          </select>
+        </div>
+        <p id="err2" style="color:#ffd7d7;text-align:center"></p>
+        <div class="actions">
+          <button class="btn-w" type="submit">İşveren Giriş</button>
+          <button class="btn-w" type="button" id="temizle">Temizle</button>
+        </div>
+      </form>
+      <div class="modal-foot"><button class="btn-w" type="button" id="kapat">Kapat</button></div>
+    </div>
+  </div>
+
+  <div id="app" class="shell hidden">
+    <aside class="side">
+      <strong>İşbaşı Modülü</strong>
+      <p style="opacity:.7;font-size:12px">İŞKUR İEP takip</p>
+      <nav class="nav">
+        <a href="#bilgiler" class="active" data-tab="bilgiler">Başvuru bilgileri</a>
+        <a href="#belgeler" data-tab="belgeler">Belgeler</a>
+      </nav>
+    </aside>
+    <main class="page">
+      <h2>İEP başvuru işlemleri</h2>
+      <div class="tabs">
+        <button class="active" data-tab="bilgiler" type="button">Başvuru bilgileri</button>
+        <button data-tab="belgeler" type="button">Belgeler</button>
+      </div>
+
+      <section id="bilgiler">
+        <div class="sheet">
+          <div>
+            <div class="iep-row"><span>Kontenjan İl:</span>
+              <select><option>İstanbul</option><option>Afyonkarahisar</option><option>Ankara</option></select>
+            </div>
+            <div class="iep-row"><span>Uygulama İl:</span>
+              <select id="uygulamaIl"><option>İstanbul</option><option>Afyonkarahisar</option></select>
+            </div>
+            <div class="iep-row"><span>Uygulama İlçe:</span>
+              <select><option>Pendik</option><option>Tuzla</option><option>Afyonkarahisar Merkez</option></select>
+            </div>
+            <div class="iep-row"><span>Uygulama Adres:</span><input value="Sanayi Mah. Örnek Cad. No:12" /></div>
+            <div class="iep-row"><span>Meslek:</span><input placeholder="Üç Harf Giriniz." value="CNC Tezgah Operatörü" /></div>
+            <div class="iep-row"><span>Öğrenim Durumu Alt/Üst:</span>
+              <div class="pair">
+                <select><option>İlköğretim</option><option>Lise</option></select>
+                <select><option>Lisans</option><option>Lise</option></select>
+              </div>
+            </div>
+            <div class="iep-row"><span>Yaş Aralığı:</span>
+              <div class="pair"><input type="number" value="18" /><input type="number" value="50" /></div>
+            </div>
+            <div class="iep-row"><span>Aynı veya Yakın Meslekte Program Düzenlenecek İşyerinizde Sigortalınız Var Mı?:</span>
+              <button type="button" class="yn yes" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
+            </div>
+            <div class="iep-row"><span>İstihdam Taahhüt Oranı:</span>
+              <div style="display:flex;gap:8px;align-items:center;max-width:160px"><span>%</span><input type="number" value="60" /></div>
+            </div>
+            <div class="iep-row"><span>Geleceğin Mesleği Kapsamında:</span>
+              <button type="button" class="yn no" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
+            </div>
+            <div class="iep-row"><span>İmalat Bilişim Kapsamında:</span>
+              <button type="button" class="yn no" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
+            </div>
+            <div class="iep-row"><span>Tehlikeli Meslek:</span>
+              <button type="button" class="yn yes" data-yn><span class="e">EVET</span><span class="h">HAYIR</span></button>
+            </div>
+          </div>
+          <div>
+            <div class="iep-row"><span>Başlangıç Tarihi:</span><input type="date" value="2026-09-17" /></div>
+            <div class="iep-row"><span>Bitiş Tarihi:</span><input type="date" value="2026-12-15" /></div>
+            <div class="iep-row"><span>İlk Hafta :</span>
+              <div class="days"><label><input type="checkbox" /> PAZTESİ</label><label><input type="checkbox" /> SALI</label><label><input type="checkbox" checked /> ÇARŞAMBA</label><label><input type="checkbox" checked /> PERŞEMBE</label><label><input type="checkbox" checked /> CUMA</label><label><input type="checkbox" checked /> CUMARTESİ</label><label><input type="checkbox" /> PAZAR</label></div>
+            </div>
+            <div class="iep-row"><span>Devam Eden Haftalar :</span>
+              <div class="days"><label><input type="checkbox" checked /> PAZTESİ</label><label><input type="checkbox" checked /> SALI</label><label><input type="checkbox" checked /> ÇARŞAMBA</label><label><input type="checkbox" checked /> PERŞEMBE</label><label><input type="checkbox" checked /> CUMA</label><label><input type="checkbox" /> CUMARTESİ</label><label><input type="checkbox" /> PAZAR</label></div>
+            </div>
+            <div class="iep-row"><span>Son Hafta :</span>
+              <div class="days"><label><input type="checkbox" checked /> PAZTESİ</label><label><input type="checkbox" checked /> SALI</label><label><input type="checkbox" checked /> ÇARŞAMBA</label><label><input type="checkbox" checked /> PERŞEMBE</label><label><input type="checkbox" checked /> CUMA</label><label><input type="checkbox" /> CUMARTESİ</label><label><input type="checkbox" /> PAZAR</label></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="belgeler" class="hidden">
+        <table class="doc-table">
+          <thead>
+            <tr><th>No</th><th>Belge Adı</th><th>Bilgi</th><th>Belge</th><th>Durum</th><th>İşlemler</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td><td>Talep Dilekçesi</td>
+              <td>İlgili şablon dosyasını indirip ilgili alanları doldurduktan ve imzaladıktan sonra belgeyi sisteme yüklemeniz gerekmektedir.</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> <a class="btn-sablon" href="/sablonlar/talep-dilekcesi.docx" download="Talep_Dilekcesi.docx">Şablon indir</a></td>
+            </tr>
+            <tr>
+              <td>2</td><td>İşveren Belgesi</td>
+              <td>İşveren türüne göre; ticaret sicil gazetesi, vakıf senedi, dernek tüzüğü veya oda kaydı belgelerinin yüklenmesi gerekmektedir.</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+            <tr>
+              <td>3</td><td>İmza Yetki Belgesi</td>
+              <td>İşverenin veya onun yerine yetkili kişinin imzaya yetkili olduğuna dair belgenin yüklenmesi gerekmektedir.</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+            <tr>
+              <td>4</td><td>Ortaklık Belgesi</td>
+              <td>Ortaklık Belgesi</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+            <tr>
+              <td>5</td><td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
+              <td>Aynı veya Yakın Meslekte Çalışan Sigortalıya İlişkin Belge</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+            <tr>
+              <td>6</td><td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
+              <td>Tehlikeli/Çok Tehlikeli Mesleğe İlişkin Eğitim Modülü/Programı</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+            <tr>
+              <td>7</td><td>Diğer Belgeler</td>
+              <td>Katılımcıya ilişkin belgeler, işyeri statüsünü gösterir belgeler, vb.</td>
+              <td><button class="btn-doc show-doc" type="button">Belge Göster</button></td><td class="durum">Yeni</td>
+              <td><label class="btn-doc file-btn">Belge Yükle<input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.tif,.tiff" /></label> <button class="btn-sil" type="button">Sil</button> --</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <div id="preview" class="preview-backdrop">
+    <div class="preview-modal">
+      <div class="preview-head">
+        <strong id="preview-title">Önizleme</strong>
+        <button class="btn-w" type="button" id="preview-close">Kapat</button>
+      </div>
+      <div class="preview-body" id="preview-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const login = document.getElementById('login')
+    const app = document.getElementById('app')
+    document.getElementById('step1').onsubmit = (e) => {
+      e.preventDefault()
+      if (document.getElementById('user').value.trim() === 'isveren' && document.getElementById('pass').value === 'demo123') {
+        document.getElementById('step1').classList.add('hidden')
+        document.getElementById('step2').classList.remove('hidden')
+        document.getElementById('err1').textContent = ''
+      } else document.getElementById('err1').textContent = 'Kullanıcı adı veya şifre hatalı.'
+    }
+    document.getElementById('step2').onsubmit = (e) => {
+      e.preventDefault()
+      if (!document.getElementById('firma').value) {
+        document.getElementById('err2').textContent = 'Lütfen firma seçiniz.'
+        return
+      }
+      login.classList.add('hidden')
+      app.classList.remove('hidden')
+    }
+    document.getElementById('temizle').onclick = () => { document.getElementById('firma').value = '' }
+    document.getElementById('kapat').onclick = () => {
+      document.getElementById('step2').classList.add('hidden')
+      document.getElementById('step1').classList.remove('hidden')
+    }
+    document.querySelectorAll('[data-tab]').forEach((el) => {
+      el.onclick = (e) => {
+        e.preventDefault()
+        const tab = el.getAttribute('data-tab')
+        document.getElementById('bilgiler').classList.toggle('hidden', tab !== 'bilgiler')
+        document.getElementById('belgeler').classList.toggle('hidden', tab !== 'belgeler')
+        document.querySelectorAll('[data-tab]').forEach((n) => n.classList.toggle('active', n.getAttribute('data-tab') === tab))
+      }
+    })
+    document.querySelectorAll('[data-yn]').forEach((btn) => {
+      btn.onclick = () => {
+        const yes = btn.classList.contains('yes')
+        btn.classList.toggle('yes', !yes)
+        btn.classList.toggle('no', yes)
+      }
+    })
+    document.querySelectorAll('.file-btn input').forEach((input) => {
+      input.onchange = () => {
+        const file = input.files && input.files[0]
+        if (!file) return
+        const row = input.closest('tr')
+        row._previewUrl = URL.createObjectURL(file)
+        row._previewName = file.name
+        row._previewType = file.type
+        row.querySelector('.durum').textContent = 'Yüklendi — ' + file.name
+      }
+    })
+    document.querySelectorAll('.show-doc').forEach((btn) => {
+      btn.onclick = () => {
+        const row = btn.closest('tr')
+        if (!row._previewUrl) return
+        const name = row._previewName || 'Belge'
+        const type = row._previewType || ''
+        document.getElementById('preview-title').textContent = 'Önizleme — ' + name
+        const body = document.getElementById('preview-body')
+        body.innerHTML = ''
+        if (type.startsWith('image/') || /\.(jpe?g|png|gif|webp|tiff?)$/i.test(name)) {
+          const img = document.createElement('img')
+          img.src = row._previewUrl
+          img.alt = name
+          body.appendChild(img)
+        } else if (type === 'application/pdf' || /\.pdf$/i.test(name)) {
+          const frame = document.createElement('iframe')
+          frame.src = row._previewUrl
+          frame.title = name
+          body.appendChild(frame)
+        } else {
+          body.innerHTML = '<p>Bu dosya türü tarayıcıda görsel olarak açılamıyor.</p>'
+        }
+        document.getElementById('preview').classList.add('on')
+      }
+    })
+    document.getElementById('preview-close').onclick = () => {
+      document.getElementById('preview').classList.remove('on')
+    }
+    document.getElementById('preview').onclick = (event) => {
+      if (event.target.id === 'preview') document.getElementById('preview').classList.remove('on')
+    }
+    document.querySelectorAll('.btn-sil').forEach((btn) => {
+      btn.onclick = () => {
+        const row = btn.closest('tr')
+        row._previewUrl = ''
+        row.querySelector('.durum').textContent = 'Yeni'
+        const fileInput = row.querySelector('input[type=file]')
+        if (fileInput) fileInput.value = ''
+      }
+    })
+  </script>
+</body>
+</html>
