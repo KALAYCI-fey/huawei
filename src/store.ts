@@ -11,6 +11,7 @@ import type {
 
 const STORAGE_KEY = 'iskur-isbasi-state-v2'
 const AUTH_KEY = 'iskur-isbasi-auth'
+const FIRMA_KEY = 'iskur-isbasi-firma'
 
 function loadState(): AppState {
   try {
@@ -156,19 +157,31 @@ export function upsertAttendance(record: AttendanceRecord) {
 }
 
 export function isAuthenticated() {
-  return localStorage.getItem(AUTH_KEY) === '1'
+  return localStorage.getItem(AUTH_KEY) === '1' && Boolean(localStorage.getItem(FIRMA_KEY))
 }
 
-export function login(username: string, password: string) {
-  if (username.trim() === 'isveren' && password === 'demo123') {
-    localStorage.setItem(AUTH_KEY, '1')
-    return true
-  }
-  return false
+export function credentialsOk(username: string, password: string) {
+  return username.trim() === 'isveren' && password === 'demo123'
+}
+
+export function completeEmployerLogin(firmaId: string) {
+  if (!firmaId) return false
+  localStorage.setItem(AUTH_KEY, '1')
+  localStorage.setItem(FIRMA_KEY, firmaId)
+  return true
+}
+
+export function getSelectedFirmaId() {
+  return localStorage.getItem(FIRMA_KEY) ?? ''
+}
+
+export function setSelectedFirmaId(id: string) {
+  localStorage.setItem(FIRMA_KEY, id)
 }
 
 export function logout() {
   localStorage.removeItem(AUTH_KEY)
+  localStorage.removeItem(FIRMA_KEY)
 }
 
 export function newId(prefix: string) {

@@ -1,7 +1,14 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { ProgramBadge } from '../components/Badges'
 import { formatDate } from '../format'
-import { deleteProgram, newId, upsertProgram, useAppState } from '../store'
+import {
+  deleteProgram,
+  getSelectedFirmaId,
+  newId,
+  setSelectedFirmaId,
+  upsertProgram,
+  useAppState,
+} from '../store'
 import type {
   DocumentKind,
   Program,
@@ -62,8 +69,11 @@ function emptyProgram(firma: Workplace | undefined): Program {
 
 export function ProgramsPage() {
   const { programs, workplaces } = useAppState()
-  const [firmaId, setFirmaId] = useState(workplaces[0]?.id ?? '')
-  const [selectedId, setSelectedId] = useState(programs[0]?.id ?? '')
+  const [firmaId, setFirmaId] = useState(getSelectedFirmaId() || workplaces[0]?.id || '')
+  const [selectedId, setSelectedId] = useState(() => {
+    const selectedFirma = getSelectedFirmaId() || workplaces[0]?.id || ''
+    return programs.find((item) => item.firmaId === selectedFirma)?.id || programs[0]?.id || ''
+  })
   const [tab, setTab] = useState<'bilgiler' | 'belgeler' | 'katilimci'>('bilgiler')
 
   const firma = workplaces.find((item) => item.id === firmaId)
@@ -100,6 +110,7 @@ export function ProgramsPage() {
             value={firmaId}
             onChange={(event) => {
               setFirmaId(event.target.value)
+              setSelectedFirmaId(event.target.value)
               const next = programs.find((item) => item.firmaId === event.target.value)
               setSelectedId(next?.id ?? '')
             }}

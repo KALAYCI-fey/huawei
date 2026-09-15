@@ -6,6 +6,7 @@ Resmi İŞKUR e-Şube değildir. e-Devlet veya `esube.iskur.gov.tr` girişi yap�
 
 ## Özellikler
 
+- İEP başvuru: firma seçimi, yeşil doldurulabilir alanlar, evet/hayır soruları, belge yükleme sekmeleri
 - Program dosyaları (kontenjan, meslek kodu, İŞKUR dosya no)
 - Kursiyer kayıtları
 - İşbaşı bildirimi: tarih, görev, çalışma yeri, belge kontrolü, e-Şube durumu

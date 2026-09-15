@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { logout, useAppState } from '../store'
+import { getSelectedFirmaId, logout, useAppState } from '../store'
 
 const links = [
   { to: '/', label: 'Özet' },
@@ -11,8 +11,9 @@ const links = [
 ]
 
 export function Layout() {
-  const { employer } = useAppState()
+  const { employer, workplaces } = useAppState()
   const navigate = useNavigate()
+  const workplace = workplaces.find((item) => item.id === getSelectedFirmaId())
 
   return (
     <div className="app-shell">
@@ -37,9 +38,9 @@ export function Layout() {
           ))}
         </nav>
         <div className="sidebar-foot">
-          <div>{employer.unvan}</div>
+          <div>{workplace?.unvan ?? employer.unvan}</div>
           <div className="muted" style={{ color: '#c9d8ea' }}>
-            {employer.il} / {employer.ilce}
+            {(workplace ?? employer).il} / {(workplace ?? employer).ilce}
           </div>
         </div>
       </aside>
